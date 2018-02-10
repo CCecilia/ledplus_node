@@ -1,0 +1,259 @@
+extends layout
+
+block content
+	div.content
+		div.container-fluid
+			.row
+				.col-lg-3.col-md-6.col-sm-6
+					.card.card-stats
+						.card-header(data-background-color='orange')
+							i.material-icons content_copy
+						.card-content
+							p.category Used Space
+							h3.title
+								| 49/50
+								small GB
+						.card-footer
+							.stats
+								i.material-icons.text-danger warning
+								a(href='#pablo') Get More Space...
+				.col-lg-3.col-md-6.col-sm-6
+					.card.card-stats
+						.card-header(data-background-color='green')
+							i.material-icons store
+						.card-content
+							p.category Revenue
+							h3.title $34,245
+						.card-footer
+							.stats
+								i.material-icons date_range
+								|  Last 24 Hours
+				.col-lg-3.col-md-6.col-sm-6
+					.card.card-stats
+						.card-header(data-background-color='red')
+							i.material-icons info_outline
+						.card-content
+							p.category Fixed Issues
+							h3.title 75
+						.card-footer
+							.stats
+								i.material-icons local_offer
+								|  Tracked from Github
+				.col-lg-3.col-md-6.col-sm-6
+					.card.card-stats
+						.card-header(data-background-color='blue')
+							i.fa.fa-twitter
+						.card-content
+							p.category Followers
+							h3.title +245
+						.card-footer
+							.stats
+								i.material-icons update
+								|  Just Updated
+			.row
+				.col-md-4
+					.card
+						.card-header.card-chart(data-background-color='green')
+							#dailySalesChart.ct-chart
+						.card-content
+							h4.title Daily Sales
+							p.category
+								span.text-success
+									i.fa.fa-long-arrow-up
+									|  55%
+								|  increase in today sales.
+						.card-footer
+							.stats
+								i.material-icons access_time
+								|  updated 4 minutes ago
+				.col-md-4
+					.card
+						.card-header.card-chart(data-background-color='orange')
+							#emailsSubscriptionChart.ct-chart
+						.card-content
+							h4.title Email Subscriptions
+							p.category Last Campaign Performance
+						.card-footer
+							.stats
+								i.material-icons access_time
+								|  campaign sent 2 days ago
+				.col-md-4
+					.card
+						.card-header.card-chart(data-background-color='red')
+							#completedTasksChart.ct-chart
+						.card-content
+							h4.title Completed Tasks
+							p.category Last Campaign Performance
+						.card-footer
+							.stats
+								i.material-icons access_time
+								|  campaign sent 2 days ago
+			.row
+				.col-lg-6.col-md-12
+					.card.card-nav-tabs
+						.card-header(data-background-color='purple')
+							.nav-tabs-navigation
+								.nav-tabs-wrapper
+									span.nav-tabs-title Tasks:
+									ul.nav.nav-tabs(data-tabs='tabs')
+										li.active
+											a(href='#profile', data-toggle='tab')
+												i.material-icons bug_report
+												|  Bugs
+												.ripple-container
+										li
+											a(href='#messages', data-toggle='tab')
+												i.material-icons code
+												|  Website
+												.ripple-container
+										li
+											a(href='#settings', data-toggle='tab')
+												i.material-icons cloud
+												|  Server
+												.ripple-container
+						.card-content
+							.tab-content
+								#profile.tab-pane.active
+									table.table
+										tbody
+											tr
+												td
+													.checkbox
+														label
+															input(type='checkbox', name='optionsCheckboxes', checked='')
+												td Sign contract for "What are conference organizers afraid of?"
+												td.td-actions.text-right
+													button.btn.btn-primary.btn-simple.btn-xs(type='button', rel='tooltip', title='Edit Task')
+														i.material-icons edit
+													button.btn.btn-danger.btn-simple.btn-xs(type='button', rel='tooltip', title='Remove')
+														i.material-icons close
+											tr
+												td
+													.checkbox
+														label
+															input(type='checkbox', name='optionsCheckboxes')
+												td Lines From Great Russian Literature? Or E-mails From My Boss?
+												td.td-actions.text-right
+													button.btn.btn-primary.btn-simple.btn-xs(type='button', rel='tooltip', title='Edit Task')
+														i.material-icons edit
+													button.btn.btn-danger.btn-simple.btn-xs(type='button', rel='tooltip', title='Remove')
+														i.material-icons close
+											tr
+												td
+													.checkbox
+														label
+															input(type='checkbox', name='optionsCheckboxes')
+												td
+													| Flooded: One year later, assessing what was lost and what was found when a ravaging rain swept through metro Detroit
+												td.td-actions.text-right
+													button.btn.btn-primary.btn-simple.btn-xs(type='button', rel='tooltip', title='Edit Task')
+														i.material-icons edit
+													button.btn.btn-danger.btn-simple.btn-xs(type='button', rel='tooltip', title='Remove')
+														i.material-icons close
+											tr
+												td
+													.checkbox
+														label
+															input(type='checkbox', name='optionsCheckboxes', checked='')
+												td Create 4 Invisible User Experiences you Never Knew About
+												td.td-actions.text-right
+													button.btn.btn-primary.btn-simple.btn-xs(type='button', rel='tooltip', title='Edit Task')
+														i.material-icons edit
+													button.btn.btn-danger.btn-simple.btn-xs(type='button', rel='tooltip', title='Remove')
+														i.material-icons close
+								#messages.tab-pane
+									table.table
+										tbody
+											tr
+												td
+													.checkbox
+														label
+															input(type='checkbox', name='optionsCheckboxes', checked='')
+												td
+													| Flooded: One year later, assessing what was lost and what was found when a ravaging rain swept through metro Detroit
+												td.td-actions.text-right
+													button.btn.btn-primary.btn-simple.btn-xs(type='button', rel='tooltip', title='Edit Task')
+														i.material-icons edit
+													button.btn.btn-danger.btn-simple.btn-xs(type='button', rel='tooltip', title='Remove')
+														i.material-icons close
+											tr
+												td
+													.checkbox
+														label
+															input(type='checkbox', name='optionsCheckboxes')
+												td Sign contract for "What are conference organizers afraid of?"
+												td.td-actions.text-right
+													button.btn.btn-primary.btn-simple.btn-xs(type='button', rel='tooltip', title='Edit Task')
+														i.material-icons edit
+													button.btn.btn-danger.btn-simple.btn-xs(type='button', rel='tooltip', title='Remove')
+														i.material-icons close
+								#settings.tab-pane
+									table.table
+										tbody
+											tr
+												td
+													.checkbox
+														label
+															input(type='checkbox', name='optionsCheckboxes')
+												td Lines From Great Russian Literature? Or E-mails From My Boss?
+												td.td-actions.text-right
+													button.btn.btn-primary.btn-simple.btn-xs(type='button', rel='tooltip', title='Edit Task')
+														i.material-icons edit
+													button.btn.btn-danger.btn-simple.btn-xs(type='button', rel='tooltip', title='Remove')
+														i.material-icons close
+											tr
+												td
+													.checkbox
+														label
+															input(type='checkbox', name='optionsCheckboxes', checked='')
+												td
+													| Flooded: One year later, assessing what was lost and what was found when a ravaging rain swept through metro Detroit
+												td.td-actions.text-right
+													button.btn.btn-primary.btn-simple.btn-xs(type='button', rel='tooltip', title='Edit Task')
+														i.material-icons edit
+													button.btn.btn-danger.btn-simple.btn-xs(type='button', rel='tooltip', title='Remove')
+														i.material-icons close
+											tr
+												td
+													.checkbox
+														label
+															input(type='checkbox', name='optionsCheckboxes')
+												td Sign contract for "What are conference organizers afraid of?"
+												td.td-actions.text-right
+													button.btn.btn-primary.btn-simple.btn-xs(type='button', rel='tooltip', title='Edit Task')
+														i.material-icons edit
+													button.btn.btn-danger.btn-simple.btn-xs(type='button', rel='tooltip', title='Remove')
+														i.material-icons close
+				.col-lg-6.col-md-12
+					.card
+						.card-header(data-background-color='orange')
+							h4.title Employees Stats
+							p.category New employees on 15th September, 2016
+						.card-content.table-responsive
+							table.table.table-hover
+								thead.text-warning
+									th ID
+									th Name
+									th Salary
+									th Country
+								tbody
+									tr
+										td 1
+										td Dakota Rice
+										td $36,738
+										td Niger
+									tr
+										td 2
+										td Minerva Hooper
+										td $23,789
+										td Curaçao
+									tr
+										td 3
+										td Sage Rodriguez
+										td $56,142
+										td Netherlands
+									tr
+										td 4
+										td Philip Chaney
+										td $38,735
+										td Korea, South

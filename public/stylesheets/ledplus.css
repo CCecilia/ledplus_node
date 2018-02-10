@@ -1,0 +1,125 @@
+/* Login Page */
+login, register{
+  cursor: pointer;
+}
+
+#register-card{
+	display: none;
+}
+
+.login-active{
+  border-bottom: 2px solid #FFF;
+}
+
+.hidden, .led-trash{
+  display: none;
+}
+
+.renewal-option, .usage-option{
+	width: 48%;
+	margin: 1%;
+	border: 2px solid #66bb6a;
+	cursor: pointer;
+}
+
+.renewal-option-selected, .renewal-option:hover,
+.usage-option-selected, .usage-option:hover{
+	color: #FFF;
+	background-color: #66bb6a;
+}
+
+.dropdown-label{
+	color: #a9afbb;
+	text-align: center;
+}
+
+.selectpicker{
+	width: 100%;
+}
+
+.weekday-input{
+	width: 10%; 
+	display: inline-block;
+	margin: 0 1%;
+}
+
+.edit-sale{
+	margin-top: 5%;
+}
+
+/* #billing-address,
+#monthly-usage, #yearly-usage, #bill-info-card{*/
+
+#led-selection-card, #billing-address,
+#monthly-usage, #yearly-usage, #bill-info-card,
+#add-rep-form-wrap{
+	display: none;
+}
+
+.led-option, .led-on-sale-card .back,
+.led-on-sale-card .front{
+    border: 1px solid;
+    padding: 10px;
+    box-shadow: 2px 4px #888888;
+    cursor: pointer;
+    margin: 1% 0;
+}
+
+.led-option:hover, .led-on-sale-card .back:hover,
+.led-on-sale-card .front:hover{
+    box-shadow: 1px 1px #888888;
+}
+
+.led-counts{
+	width: 99%;
+	margin: 0 auto 5% auto;
+    border: 1px solid;
+	display: none;
+    border-bottom: 1px solid;
+    padding: 10px;
+    box-shadow: 2px 4px #888888;
+}
+
+.led-count{
+	width: 20%;
+	display: inline-block;
+	margin: 0 1%;
+}
+
+.bill-image-uplaod-btn{
+	width: 100%;
+}
+
+.text-date-input{
+	border: 1px solid #66bb6a;
+	border-radius: 5px;
+	background-color: #4caf50;
+	width: 30%;
+    text-align: center;
+    padding: 1%;
+    color: transparent;
+    text-shadow: 0 0 0 #FFF;
+    cursor: pointer;
+}
+
+.text-date-input::placeholder {
+    color: white;
+    opacity: 1;
+    text-align: center
+}
+
+.led-on-sale-card .back{
+	display: none;
+}
+
+.clickable{
+	cursor: pointer;
+}
+
+@media (max-width: 760px) {
+	.renewal-option, .usage-option{
+		width: 100%;
+		margin: 2% auto;
+	}
+}
+

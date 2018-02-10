@@ -1,5 +1,16 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+	div.content
+		div.container-fluid
+			div.row
+				div.col-md-12
+					div.card
+						.card-header(data-background-color='green') 
+							h2.text-center Welcome To #{title}
+						.card-content
+							.row
+								.col-md-6.text-center
+									a.btn.btn-success(href='/users/login') Login
+								.col-md-6.text-center
+									a.btn.btn-success(href='/users/register') Register

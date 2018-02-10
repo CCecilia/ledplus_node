@@ -1,0 +1,43 @@
+extends layout
+
+block content
+	div.content
+		div.container-fluid
+			div.row
+				div.col-md-12
+					div.card
+						.card-header(data-background-color='green') 
+							h2.text-center #{title}
+						.card-content
+							.row
+								.col-md-6.col-md-offset-3
+									if errors 
+										ul(style="color:red;")
+										for error in errors
+											li!= error.msg
+							.row
+								.col-md-6.col-md-offset-3
+									form(name='register', method='POST', action='/users/register')
+										.row
+											.col-md-12
+												.form-group
+													h4.dropdown-label Retail Energy Provider
+													select.selectpicker.show-tick(name='retail_energy_provider', data-style='btn-success', data-width='100%', required='true')
+														option(value='', data-content="<span style='color: #FFF;'>Select REP you work for</span>")
+														each rep in rep_list
+															option(value=rep._id) #{rep.name}
+											.col-md-12
+												.form-group.label-floating
+													label.control-label Email
+													input.form-control(name='email', type='email', required='true', value=(undefined===user ? '' : user.email))
+											.col-md-12
+												.form-group.label-floating
+													label.control-label Password
+													input.form-control(name='password', type='password', minlength="8", required='true', value=(undefined===user ? '' : user.password))
+											.col-md-12
+												.form-group.label-floating
+													label.control-label Confirm Password
+													input.form-control(name='confirm_password', type='password', minlength="8", required='true', value=(undefined===user ? '' : user.password))
+										.row
+											.col-md-12.text-center
+												button.btn.btn-success(type='submit') Register

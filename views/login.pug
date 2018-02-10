@@ -1,0 +1,32 @@
+extends layout
+
+block content
+	div.content
+		div.container-fluid
+			div.row
+				div.col-md-12
+					div.card
+						.card-header(data-background-color='green') 
+							h2.text-center #{title}
+						.card-content
+							.row
+								.col-md-6.col-md-offset-3
+									if errors 
+										ul
+										for error in errors
+											li!= error.msg
+							.row
+								.col-md-6.col-md-offset-3
+									form(method='POST')
+										div.row
+											div.col-md-12
+												div.form-group.label-floating
+													label.control-label Email
+													input.form-control(name='email', type='email', required='true')
+											div.col-md-12
+												div.form-group.label-floating
+													label.control-label Password
+													input.form-control(name='password', type='password', minlength="8" required='true')
+										div.row.text-center
+											button.btn.btn-primary(type='submit', data-background-color='green') Log In
+											div.clear-fix

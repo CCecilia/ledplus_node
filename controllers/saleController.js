@@ -74,14 +74,14 @@ function baseRate( sale_id ) {
 
 // Sales List
 exports.sales_list = function(req, res, next) {
-    // let user = req.session.user;
-    let user = {
-        _id: ObjectId("5a7e269087cf600907bb3ae8"),
-        admin: false,
-        email : 'christian.cecilia1@gmail.com',
-        password : '$2a$08$N5EjrC9VdIHzQ5Qmr8vReeJv1aW09YPI/Cr3u3ea.qpo3H7WnMXWO',
-        retail_energy_provider : ObjectId('5a7e0075110dfbb0b28b7152')
-    }
+    let user = req.session.user;
+    // let user = {
+    //     _id: ObjectId("5a7e269087cf600907bb3ae8"),
+    //     admin: false,
+    //     email : 'christian.cecilia1@gmail.com',
+    //     password : '$2a$08$N5EjrC9VdIHzQ5Qmr8vReeJv1aW09YPI/Cr3u3ea.qpo3H7WnMXWO',
+    //     retail_energy_provider : ObjectId('5a7e0075110dfbb0b28b7152')
+    // }
     async.parallel({
         sales: function(callback){
             Sale.find({ agent: ObjectId("5a7e269087cf600907bb3ae8") })

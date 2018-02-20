@@ -6,10 +6,6 @@ const async = require('async');
 const { body,validationResult } = require('express-validator/check');
 const { sanitizeBody } = require('express-validator/filter');
 
-// remove 
-const mongoose = require('mongoose');
-const ObjectId = mongoose.Types.ObjectId;
-
 // Login Page
 exports.login_form = function(req, res) {
     res.render('login', {title: 'Login'});
@@ -48,10 +44,12 @@ exports.register_form = function(req, res, next) {
     RetailEnergyProvider.find({},'name')
     .exec(function (err, reps) {
       if (err) { return next(err); }
+      
       let template_context = {
         title: 'Register', 
         rep_list: reps
       }
+      
       res.render('register', template_context);
     }); 
 };

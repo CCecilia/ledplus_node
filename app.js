@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const session = require('express-session');
+const MongoDBStore = require('connect-mongodb-session')(session);
 const fileUpload = require('express-fileupload');
 
 const index = require('./routes/index');
@@ -14,6 +15,8 @@ const sales = require('./routes/sales');
 const leds = require('./routes/leds');
 const reps = require('./routes/reps');
 const service_classes = require('./routes/service_classes');
+
+const User = require('./models/user');
 
 const app = express();
 
@@ -35,13 +38,40 @@ app.use(bodyParser.json({limit: "50mb"}));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+const store = new MongoDBStore({
+  uri: mongoDB,
+    collection: 'user_session'
+  });
+  // Catch errors
+  store.on('error', function(error) {
+    assert.ifError(error);
+    assert.ok(false);
+});
 app.use(session({
   secret: 'f-_k-o5+&x34=b)xh@w-fuk7=k4gz7l1&s2i&3mp*oj#^i=z80',
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: false }
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
+  },
+  store: store,
+  resave: true,
+  saveUninitialized: true
 }))
 app.use(fileUpload());
+
+app.use(function(req, res, next) {
+  if (req.session && req.session.user) {
+    User.findOne({ email: req.session.user.email }, function(err, user) {
+      if (user) {
+        req.user = user;
+        delete req.user.password; // delete the password from the session
+        req.session.user = user;
+      }
+      next();
+    });
+  } else {
+    next();
+  }
+});
 
 app.use('/', index);
 app.use('/users', users);

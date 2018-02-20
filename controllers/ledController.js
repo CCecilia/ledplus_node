@@ -4,29 +4,15 @@ const fileUpload = require('express-fileupload');
 const fs = require('fs');
 const Led = require('../models/led');
 
-// remove 
-const mongoose = require('mongoose');
-const ObjectId = mongoose.Types.ObjectId;
-
 // LEDs: list
 exports.led_list = function(req, res, next) {
-    // let user = req.session.user;
-    let user = {
-        _id: ObjectId("5a7e269087cf600907bb3ae8"),
-        admin: false,
-        email : 'christian.cecilia1@gmail.com',
-        password : '$2a$08$N5EjrC9VdIHzQ5Qmr8vReeJv1aW09YPI/Cr3u3ea.qpo3H7WnMXWO',
-        retail_energy_provider : ObjectId('5a7e0075110dfbb0b28b7152'),
-        dashboard: '/users/dashboard/5a7e269087cf600907bb3ae8/'
-    };
-
     Led.find()
     .exec(function(err, led_list){
         if(err){ return next(err); }
 
         let template_context = {
             title: 'LEDs',
-            user: user,
+            user: req.session.user,
             led_list: led_list
         };
 
@@ -36,16 +22,6 @@ exports.led_list = function(req, res, next) {
 
 // LEDs: detail
 exports.led_detail = function(req, res, next) {
-    // let user = req.session.user;
-    let user = {
-        _id: ObjectId("5a7e269087cf600907bb3ae8"),
-        admin: false,
-        email : 'christian.cecilia1@gmail.com',
-        password : '$2a$08$N5EjrC9VdIHzQ5Qmr8vReeJv1aW09YPI/Cr3u3ea.qpo3H7WnMXWO',
-        retail_energy_provider : ObjectId('5a7e0075110dfbb0b28b7152'),
-        dashboard: '/users/dashboard/5a7e269087cf600907bb3ae8/'
-    };
-
     Led.findById(req.params.id)
     .exec(function(err, led){
         if(err){ return next(err); }
@@ -59,7 +35,8 @@ exports.led_detail = function(req, res, next) {
 
         let template_context = {
             title: led.name,
-            led: led
+            led: led,
+            user: req.session.user
         };
         res.render('led_detail', template_context);
     });
@@ -161,7 +138,7 @@ exports.led_update = [
 
 // LEDs: create form
 exports.led_create_form = function(req, res, next) {
-    res.render('led_detail', {title: 'New LED'});
+    res.render('led_detail', {title: 'New LED', user: req.session.user});
 };
 
 // LEDs:create

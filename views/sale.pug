@@ -1,0 +1,102 @@
+extends layout
+
+block content
+	.content
+		.container-fluid
+			.row
+				.col-md-12
+					.card
+						.card-header(data-background-color='green')
+							.row
+								.col-md-6.text-left
+									h4.title #{title}
+								.col-md-6.text-right
+									h4.title Created: #{sale.date_created_pretty}
+						.card-content.table-responsive
+							.row
+								.col-md-3
+									h4.text-primary.text-success Customer
+									p Authorized Representative: #{sale.authorized_representative}
+									p Sub-Type: #{sale.subtype.name}
+									p Hours of Operation: #{sale.annual_hours_of_operation}
+									p Service Start Date: #{sale.service_start_date_pretty}
+								.col-md-3
+									.row
+										h4.text-primary.text-success Service Address
+										p #{sale.service_address.street_address}
+										p #{sale.service_address.city} #{sale.service_address.state}, #{sale.service_address.zip_code}
+									.row
+										h4.text-primary.text-success Billing Address
+										p #{sale.billing_address.street_address}
+										p #{sale.billing_address.city} #{sale.billing_address.state}, #{sale.billing_address.zip_code}
+								.col-md-3
+									h4.text-primary.text-success Bill
+									p Utility: #{sale.utility.name}
+									p Service Class: #{sale.service_class.name}
+									p Account Number: #{sale.account_number}
+									p Monthly usage: #{sale.monthly_kwh}
+									p Yearly usage: #{sale.yearly_kwh}
+									p Supply: #{sale.supply_charges}
+									p Delivery: #{sale.delivery_charges}
+								.col-md-3
+									h4.text-primary.text-success Bill Image
+									img.clickable(src=sale.bill_image, onclick="window.open(this.src)")
+							hr
+							if sale.leds.length > 0
+								.row
+									.h4.text-primary.text-success.text-center LEDs
+									.col-md-12
+										table#sale-led-table.table
+											thead
+												th.text-center Image
+												th.text-center Name
+												th.text-center Type
+												th.text-center Color
+												th.text-center Total 
+												th.text-center LED 
+												th.text-center Delamping
+												th.text-center Not Replacing
+												th.text-center Wattage Reduction
+												th.text-center Installation
+												th.text-center Ceiling
+											tbody
+											for led in sale.leds
+												tr.text-center
+													td 
+														img(src=led.image, alt=led.name, style='width:50px; height:50px;')
+													td #{led.name}
+													td #{led.type}
+													td #{led.color}
+													td.text-center #{led.total_count}
+													td.text-center #{led.led_count}
+													td.text-center #{led.delamping_count}
+													td.text-center #{led.not_replacing_count}
+													td.text-center #{led.wattage_reduction}
+													if led.installation_required === 'true'
+														td.text-center Yes
+													else
+														td.text-center no
+													if led.ceiling_height === 1
+														td.text-center Over 16`
+													else if led.ceiling_height === 2
+														td.text-center 12` to 16`
+													else
+														td.text-center Up to 12`
+							hr
+							.row
+								.col-md-12
+									h4.text-primary.text-success.text-center Calculations
+							.row
+								.col-md-4
+									p Bulb Maintenace Cost: #{sale.calculations.annual_maintenance_cost}
+									p Annual Consumption Reduction: #{sale.calculations.annual_consumption_reduction}
+									p Projected Usage: #{sale.calculations.projected_usage}
+									p Supply Rate: #{sale.supply_rate}
+									p Delivery Rate: #{sale.delivery_rate}
+								if rate
+									.col-md-4
+										p Base Rate: #{rate.rate}
+										p EO adder: #{rate.energy_only_adder}
+										p Marketing: #{rate.marketing_adder}
+										p Logistics: #{rate.logistics_adder}
+										p Max Adder: #{rate.max_adder}

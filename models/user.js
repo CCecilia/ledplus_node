@@ -13,8 +13,12 @@ let UserSchema = new Schema({
     },
     retail_energy_provider: {
         type: Schema.ObjectId,
-        ref: 'RetialEnergyProvider',
+        ref: 'RetailEnergyProvider',
         required: true
+    },
+    team_code: {
+        type: String,
+        default: 'ALL'
     },
     admin: {
         type: Boolean, 

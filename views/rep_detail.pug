@@ -1,0 +1,137 @@
+extends layout
+
+block content
+	.content
+		.container-fluid
+			.row
+				.col-md-12
+					.card.card.card-nav-tabs
+						.card-header(data-background-color='green')
+							.row
+								.col-md-6
+									.nav-tabs-navigation
+										.nav-tabs-wrapper
+											span.nav-tabs-title #{title}
+											ul.nav.nav-tabs(data-tabs='tabs')
+												li.active
+													a(href='#information', data-toggle='tab')
+														i.material-icons bug_report
+														|  Information
+														.ripple-container
+												li
+													a(href='#rates', data-toggle='tab')
+														i.material-icons code
+														|  Rates
+														.ripple-container
+												li
+													a(href='#users', data-toggle='tab')
+														i.material-icons code
+														|  Users
+														.ripple-container
+
+								.col-md-6.text-right
+									h4 ID: #{rep._id}
+
+						.card-content
+							.tab-content.table-overflow
+								#information.tab-pane.active
+									form(method='POST', enctype="multipart/form-data")
+										.row
+											.col-md-6
+												if rep 
+													img#rep-logo(src=rep.logo, width='100%', height='auto')
+													label(for='rep_logo') Replace Logo
+												else
+													label(for='rep_logo') Add Logo
+												input(type='file', name='rep_logo')
+											.col-md-6
+												.form-group.label-floating
+													label.control-label Name
+													input.form-control(name='name', type='text', value=(undefined===rep ? '' : rep.name))
+										.row
+												.col-md-12.text-center
+													button.btn.btn-success(type='submit') Update
+									
+								#rates.tab-pane
+									.row
+										.col-md-12
+											label(for='rate-shee-upload') Upload Rates
+											input#rate-shee-upload(type='file', name='rate-sheet-upload', data-id=rep._id)
+									hr
+									table#rates-table.table
+										thead
+											th Utility
+											th State
+											th REP
+											th Team Code
+											th Rate
+											th Zone
+											th Product
+											th Service Class
+											th Start Date
+											th Cutoff Date
+											th Annual Usage Min
+											th Annual Usage Max
+											th Sales Tax
+											th Marketing Adder
+											th Logistics
+											th Energy Only Adder
+											th Term
+											th Max Adder
+										tfoot
+											th Utility
+											th State
+											th REP
+											th Team Code
+											th Rate
+											th Zone
+											th Product
+											th Service Class
+											th Start Date
+											th Cutoff Date
+											th Annual Usage Min
+											th Annual Usage Max
+											th Sales Tax
+											th Marketing Adder
+											th Logistics
+											th Energy Only Adder
+											th Term
+											th Max Adder
+										tbody
+											for rate in rep.rates
+												tr.clickable
+													td #{rate.utility} 
+													td #{rate.state} 
+													td #{rate.rep} 
+													td #{rate.team_code} 
+													td #{rate.rate} 
+													td #{rate.zone} 
+													td #{rate.product} 
+													td #{rate.service_class} 
+													td #{rate.start_date} 
+													td #{rate.cut_off_date} 
+													td #{rate.annual_usage_min} 
+													td #{rate.annual_usage_max} 
+													td #{rate.sales_tax} 
+													td #{rate.marketing_adder} 
+													td #{rate.logistics} 
+													td #{rate.energy_only_adder} 
+													td #{rate.term} 
+													td #{rate.max_adder}
+								#users.tab-pane 
+									table#users-table.table
+										thead
+											th ID
+											th Email
+											th Team Code
+											th Admin
+										tbody
+											for user in users
+												tr 
+													td #{user._id}
+													td #{user.email}
+													td #{user.team_code}
+													if user.admin
+														td Yes
+													else 
+														td No

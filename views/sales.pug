@@ -1,0 +1,28 @@
+extends layout
+
+block content
+	.content
+		.container-fluid
+			.row
+				.col-md-12
+					.card
+						.card-header(data-background-color='green')
+							h4.title Sales
+							p.category Here is a subtitle for this table
+						.card-content.table-responsive
+							table#sales-table.table
+								thead
+									th ID
+									th Business Name
+									th Subtype
+									th Date Created
+								tbody
+									for sale in sales 
+										tr.clickable
+											td #{sale._id} 
+											td #{sale.business_name}
+											if sale.subtype
+												td #{sale.subtype.name}
+											else
+												td n/a
+											td #{sale.date_created_pretty}

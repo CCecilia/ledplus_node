@@ -11,7 +11,7 @@ html(lang='en')
 		//-  Bootstrap Select CSS
 		link(rel='stylesheet', type='text/css', href='/stylesheets/bootstrap-select.min.css')
 		//- Datatables CSS
-		link(rel='stylesheet', type='text/css', href='/stylesheets/datatables.min.css')
+		link(rel='stylesheet', type='text/css', href='https://cdn.datatables.net/v/bs/jszip-2.5.0/dt-1.10.16/b-1.5.1/b-html5-1.5.1/fh-3.1.3/sl-1.2.5/datatables.min.css')
 		//- jQuery UI CSS
 		link(rel='stylesheet', type='text/css', href='/stylesheets/jquery-ui.min.css')
 		//- Material Dashboard CSS
@@ -35,15 +35,30 @@ html(lang='en')
 										i.material-icons lock_open
 										p Log In
 						else
-							li.active
-									if user
-										a(href=user.dashboard) 
-											i.material-icons dashboard
-											p Dashboard	
-							li.active
-									a(href='/sales/sale/new/') 
+							li(class=('Dashboard'===title ? 'active' : ''))
+									a(href='/users/dashboard/5a7e269087cf600907bb3ae8/') 
+										i.material-icons dashboard
+										p Dashboard	
+							li(class=('New Sale'===title ? 'active' : ''))
+									a(href='/sales/new/') 
 										i.material-icons assignment_turned_in
 										p New Sale	
+							li(class=('Sales'===title ? 'active' : ''))
+									a(href='/sales/') 
+										i.material-icons assessment
+										p Sales		
+							li(class=('Retail Energy Provider'===title ? 'active' : ''))
+									a(href='/retailEnergyProviders/') 
+										i.material-icons assessment
+										p Retail Energy Provider	
+							li(class=('LEDs'===title ? 'active' : ''))
+									a(href='/LEDs') 
+										i.material-icons assessment
+										p LEDs		
+							li(class=('Service Classes'===title ? 'active' : ''))
+									a(href='/serviceClasses') 
+										i.material-icons assessment
+										p Service Classes	
 			div.main-panel
 				nav.navbar.navbar-transparent.navbar-absolute
 					if title == 'Login' || title == 'LED Plus'
@@ -111,10 +126,18 @@ html(lang='en')
 	//- Bootstrap Select Plugin
 	script(type='text/javascript', src='/javascripts/bootstrap-select.js')
 	//- Datatables Library
-	script(type='text/javascript', src='/javascripts/datatables.min.js')
+	script(type='text/javascript', src='https://cdn.datatables.net/v/bs/jszip-2.5.0/dt-1.10.16/b-1.5.1/b-html5-1.5.1/fh-3.1.3/sl-1.2.5/datatables.min.js')
 	//- jQuery UI Plugin
 	script(type='text/javascript', src='/javascripts/jquery-ui.min.js')
 	//- Material Dashboard javascript methods
 	script(type='text/javascript', src='/javascripts/material-dashboard.js')
+	//- Underscore Library
+	script(type='text/javascript', src='/javascripts/underscore.js')
+	//- DropZoneJS Plugin
+	script(type='text/javascript', src='/javascripts/dropzone.js')
+	//- PapaParse Plugin
+	script(type='text/javascript', src='/javascripts/papaparse.min.js')
+	//- Google Maps
+	script(src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDJFB9TXQP3JKkeq6NnrMeby-8HNB2GGh4&amp;libraries=places&amp;callback=initAutocomplete", async="", defer="")
 	//- Global 
 	script(type='text/javascript', src='/javascripts/global.js')

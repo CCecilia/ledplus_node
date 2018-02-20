@@ -1,0 +1,36 @@
+extends layout
+
+block content
+	.content
+		.container-fluid
+			.row
+				.col-md-12
+					.card
+						.card-header(data-background-color='green')
+							.row
+								.col-md-6.text-left
+									h4.title #{title}
+								.col-md-6.text-right
+									a(href='/LEDs/create')
+										i.fa.fa-plus.fa-2x
+						.card-content.table-responsive
+							table#led-table.table
+								thead
+									th ID
+									th Image
+									th Name
+									th Type
+									th Net Cost
+									th Sale Price
+									th Non LED Price
+								tbody
+									for led in led_list 
+										tr.clickable 
+											td #{led._id}
+											td 
+												img(src=led.image, alt=led.name, style='width:50px; height:50px;') 
+											td #{led.name}
+											td #{led.type}
+											td #{led.pricing.net_cost}
+											td #{led.pricing.sale_price}
+											td #{led.pricing.non_led_price}

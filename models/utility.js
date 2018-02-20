@@ -4,12 +4,14 @@ const Schema = mongoose.Schema;
 let UtilitySchema = new Schema({
     name: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     state: {
         type: String,
         required: true,
-        max: 2
+        max: 2,
+        uppercase: true
     },
     max_account_digits: {
         type: Number,

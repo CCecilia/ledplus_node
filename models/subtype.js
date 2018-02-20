@@ -4,7 +4,8 @@ const Schema = mongoose.Schema;
 let SubTypeSchema = new Schema({
     name: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     estimated_hours: {
         monday: {

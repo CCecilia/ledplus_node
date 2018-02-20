@@ -1,11 +1,245 @@
 extends layout
 
 block content
-	div.content
-		div.container-fluid
-			div.row
-				div.col-md-12
-					div.card
+	.content
+		.container-fluid
+			.row
+				.col-md-12
+					.card
 						.card-header(data-background-color='green') 
-							h2.text-center #{title}
+							h3.text-center #{title}
 						.card-content
+							.fieldset
+								.legend.text-success Customer Information
+								.row
+									.col-md-4.col-sm-6
+										.form-group.label-floating
+											label.control-label Business Name
+											input.form-control(name='business_name', type='text', required='true')
+									.col-md-4.col-sm-6
+										.form-group.label-floating
+											label.control-label Authorized Rep
+											input.form-control(name='authorized_representative', type='text', required='true')
+									.col-md-4.col-sm-12
+										.form-group.label-floating
+											h4.dropdown-label
+												select#subtype-dropdown.selectpicker.show-tick(data-style='btn-success', data-width='100%', style='color: #FFF;')
+													option(value='', data-content='<span style="color: #FFF;">Select Subtype</span>')
+													each subtype in subtype_list
+														option(value=subtype._id, data=subtype.estimated_hours) #{subtype.name}
+								.row
+									.col-md-6.col-sm-12
+										.col-md-12
+											h4.text-center.text-success.text-bold 
+												| Service Address 
+												i#autofill-service-address.fa.fa-crosshairs.clickable
+										.col-md-12
+											.form-group.label-floating
+												label.control-label Street Address
+												input.form-control(name='service_address', type='text', required='true')
+										.col-md-4
+											.form-group.label-floating
+												label.control-label City
+												input.form-control(name='service_city', type='text', required='true')
+										.col-md-4
+											.form-group.label-floating
+												label.control-label State
+												input.form-control(name='service_state', type='text', minlength='2', maxlength='2', title='Example. NY', required='true')
+										.col-md-4
+											.form-group.label-floating
+												label.control-label Zip Code
+												input.form-control(name='service_zip_code', type='text', title='Example 08010 or 08010-1004', minlength='5', maxlength='10' required='true')
+									.col-md-6.col-sm-12
+										.col-md-12
+											h4.text-center.text-success.text-bold Billing Address
+										.col-md-12
+											.form-group.label-floating
+												label.control-label Street Address
+												input.form-control(name='billing_address', type='text', required='true')
+										.col-md-4
+											.form-group.label-floating
+												label.control-label City
+												input.form-control(name='billing_city', type='text', required='true')
+										.col-md-4
+											.form-group.label-floating
+												label.control-label State
+												input.form-control(name='billing_state', type='text', minlength='2', maxlength='2', title='Example. NY', required='true')
+										.col-md-4
+											.form-group.label-floating
+												label.control-label Zip Code
+												input.form-control(name='billing_zip_code', type='text', title='Example 08010 or 08010-1004', minlength='5', maxlength='10' required='true')
+								.row
+									.col-md-12
+										h4.text-center.text-success.text-bold Hours of Operation
+										.weekday-input.input-group.text-center
+											label Mon
+											input.form-control.weekly-hours(type='number', min='0', max='24', name='monday', placeholder='0')
+										.weekday-input.input-group.text-center
+											label Tue
+											input.form-control.weekly-hours(type='number', min='0', max='24', name='tuesday', placeholder='0')
+										.weekday-input.input-group.text-center
+											label Wed
+											input.form-control.weekly-hours(type='number', min='0', max='24', name='wednesday', placeholder='0')
+										.weekday-input.input-group.text-center
+											label Thu
+											input.form-control.weekly-hours(type='number', min='0', max='24', name='thursday', placeholder='0')
+										.weekday-input.input-group.text-center
+											label Fri
+											input.form-control.weekly-hours(type='number', min='0', max='24', name='friday', placeholder='0')
+										.weekday-input.input-group.text-center
+											label Sat
+											input.form-control.weekly-hours(type='number', min='0', max='24', name='saturday', placeholder='0')
+										.weekday-input.input-group.text-center
+											label Sun
+											input.form-control.weekly-hours(type='number', min='0', max='24', name='sunday', placeholder='0')
+										.weekday-input.input-group.text-center
+											label
+												| Total
+												input.form-control(type='number', min='0', max='8760', name='total', placeholder='0', required='true')
+							hr
+							.fieldset
+								.legend.text-success LED Selection
+								.row
+									.col-md-6
+										h2.text-center.text-success LEDs
+										.row.led-trash(ondrop='trashLED(event)', ondragover='allowDrop(event)')
+										.row.led-list
+											for led in led_list                       
+												.row.led-option(data-id=led._id, id=led._id, ondragstart='toggleTrash(event)', ondragend='toggleTrash(event)')
+													.col-sm-3.col-md-3
+														img(src=led.image, width='100%', height='auto')
+													.col-sm-6.col-md-6
+														p
+															strong Name
+														p #{led.name}
+													.col-sm-3.col-md-3
+														p
+															strong Type
+														p #{led.type}
+												.row.led-counts(data-id=led._id)
+													form(name='led-to-sale-form', data-id=led._id, data=led)
+														.col-md-9
+															.led-count.input-group.text-center
+																label Total
+																input.form-control(type='number', name='led-total', placeholder='0', data-id=led._id, required='true')
+															.led-count.input-group.text-center
+																label LEDs
+																input.form-control(type='number', name='led-count', placeholder='0', data-id=led._id, required='true')
+															.led-count.input-group.text-center
+																label Delamping
+																input.form-control(type='number', name='led-delamping', placeholder='0', data-id=led._id)
+															.led-count.input-group.text-center
+																label Not Replacing
+																input.form-control(type='number', name='led-not-replacing', placeholder='0', data-id=led._id, disabled='true')
+														.col-md-3
+															.form-group.label-floating
+																h4.dropdown-label Colors
+																select.selectpicker.led-color(data-style='btn-success', data-width='100%', data-id=led._id)
+																	option(value='5000k', selected='')
+																		span(style='color:#FFF;') Color
+																		for color in led.colors
+																			option(value=color) #{color}
+														.col-md-6
+															.input-group.text-center
+																label Installation
+																br
+																.btn-group.btn-group-toggle(data-toggle='buttons')
+																	label.btn.btn-secondary.led-installation.active(data-id=led._id, data-type='true')
+																		input(type='radio', name='led-installation', checked='')
+																		|  Yes
+																	label.btn.btn-secondary.led-installation(data-id=led._id, data-type='false')
+																		input(type='radio', name='led-installation')
+																		|  No
+														.col-md-6
+															.form-group.label-floating
+																select.selectpicker.show-tick.ceiling-height-dropdown(data-style='btn-success', data-width='100%', data-id=led._id)
+																	option(value='2', selected='')
+																		span(style='color:#FFF;') Ceiling Height
+																	option(value='1')
+																		span(style='color:#FFF;') Over 16`
+																	option(value='2')
+																		span(style='color:#FFF;') 12` to 16`
+																	option(value='3')
+																		span(style='color:#FFF;') Up to 12`
+														.col-md-12.text-center
+															button.btn.btn-success Add to Sale
+									.col-md-6
+										h2.text-center.text-success Selected
+										#selected-leds
+											if sale
+												for led in sale.leds      
+													.row.led-option(data-id=led._id, id=led._id, ondragstart='toggleTrash(event)', ondragend='toggleTrash(event)', draggable='true')
+														.col-sm-3.col-md-3
+															img(src=led.image, width='100%', height='auto')
+														.col-sm-6.col-md-6
+															p
+																strong Name
+															p #{led.name}
+														.col-sm-3.col-md-3
+															p
+																strong Type
+															p #{led.type}
+							hr
+							.fieldset
+								.legend.text-success Bill Information
+								.row
+									.col-md-4.col-sm-6
+										.form-group.label-floating
+											select#utility-dropdown.selectpicker(data-live-search='true', data-style='btn-success', data-width='100%', require='true')
+												option(value='', data-content="<span style='color: #FFF;'>Utility</span>")
+												for utility in utility_list
+													option(value=utility._id, data={utility}) #{ utility.name}
+									.col-md-4.col-sm-6
+										.form-group
+											select#service-class-dropdown.selectpicker.show-tick(data-live-search='true', data-style='btn-success', data-width='100%', required='true')
+												option(value='', data-content="<span style='color: #FFF;'>Service Class</span>")
+												for service_class in service_class_list
+													option(value=service_class._id) #{service_class.name}
+									.col-md-4.col-sm-12
+										.form-group.label-floating
+											label.control-label Account Number
+											input.form-control(name='account_number', type='text', required='true')
+								.row
+									.col-md-4.col-sm-12
+										.form-group
+											select#month-of-bill-dropdown.selectpicker(data-style='btn-success', require='true', data-width='100%')
+												option(value='', data-content="<span style='color: #FFF;'>Month Of Bill</span>")
+												option(value='january') January
+												option(value='february') February
+												option(value='march') March
+												option(value='april') April
+												option(value='may') May
+												option(value='june') June
+												option(value='july') July
+												option(value='august') August
+												option(value='september') September
+												option(value='october') October
+												option(value='november') November
+												option(value='december') December
+									.col-md-4.col-sm-12
+										.form-group.label-floating
+											label.control-label Supply Charges
+											input.form-control(name='supply_charges', type='number', min='0.00', max='1000000.00', step='0.01', title='needs to be in 100.00 format', required='true')
+									.col-md-4.col-sm-12
+										.form-group.label-floating
+											label.control-label Delivery Charges
+											input.form-control(name='delivery_charges', type='number', min='0.00', max='1000000.00', step='0.01', title='needs to be in 100.00 format', required='true')
+								.row
+									.col-md-6.col-sm-12
+										.form-group.label-floating
+											label.control-label Monthly Usage kWh
+											input.form-control(name='monthly_usage', type='number', title='monthly usage')
+									.col-md-6.col-sm-12
+										.form-group.label-floating
+											label.control-label Yearly Usage kWh
+											input.form-control(name='yearly_usage', type='number', title='yearly usage', required='true')
+									.col-md-6.text-center
+											.form-group
+												h3.text-success Service Start Date
+												input.text-date-input(type='text', name='service_start_date', autocomplete='off', placeholder='click to add date', title='Pleaase the date in which the customer wants service to start.', required='true')
+									.col-md-6.text-center
+											.form-group
+												label.btn.btn-default.btn-file.btn-success.bill-image-uplaod-btn Add Bill Image
+													input#bill-image(type='file',  accept='image/*;capture=camera', style='display:none;')
+							.row.text-center
+								button.btn.btn-success.create-new-sale(type='button') Create

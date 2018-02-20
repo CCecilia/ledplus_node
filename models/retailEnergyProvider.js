@@ -5,6 +5,9 @@ let RetailEnergyProviderSchema = new Schema({
     name: {
         type: String,
         required: true
+    },
+    rates: {
+        type: Array
     }
 });
 

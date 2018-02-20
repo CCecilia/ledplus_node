@@ -1,0 +1,25 @@
+extends layout
+
+block content
+	.content
+		.container-fluid
+			.row
+				.col-md-12
+					.card
+						.card-header(data-background-color='green')
+							.row
+								.col-md-6.text-left
+									h4.title #{title}
+								.col-md-6.text-right
+									a(href='/serviceClasses/create')
+										i.fa.fa-plus.fa-2x
+						.card-content.table-responsive
+							table#service-class-table.table
+								thead
+									th ID
+									th Name
+								tbody
+									for service_class in service_classes 
+										tr.clickable 
+											td #{service_class._id}
+											td #{service_class.name}

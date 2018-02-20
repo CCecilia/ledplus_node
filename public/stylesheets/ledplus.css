@@ -1,31 +1,6 @@
 /* Login Page */
-login, register{
-  cursor: pointer;
-}
-
-#register-card{
-	display: none;
-}
-
-.login-active{
-  border-bottom: 2px solid #FFF;
-}
-
 .hidden, .led-trash{
   display: none;
-}
-
-.renewal-option, .usage-option{
-	width: 48%;
-	margin: 1%;
-	border: 2px solid #66bb6a;
-	cursor: pointer;
-}
-
-.renewal-option-selected, .renewal-option:hover,
-.usage-option-selected, .usage-option:hover{
-	color: #FFF;
-	background-color: #66bb6a;
 }
 
 .dropdown-label{
@@ -47,13 +22,9 @@ login, register{
 	margin-top: 5%;
 }
 
-/* #billing-address,
-#monthly-usage, #yearly-usage, #bill-info-card{*/
-
-#led-selection-card, #billing-address,
-#monthly-usage, #yearly-usage, #bill-info-card,
-#add-rep-form-wrap{
-	display: none;
+.led-list{
+	max-height: 650px;
+	overflow-y: scroll;
 }
 
 .led-option, .led-on-sale-card .back,
@@ -86,6 +57,18 @@ login, register{
 	margin: 0 1%;
 }
 
+.led-trash{
+	width: 100%;
+	height: 510px;
+	padding: 1%;
+	background-image: url("../images/trash-can-icon.png");
+	background-repeat: no-repeat;
+	background-color: red;
+    background-size: auto;
+    border-radius: 15px;
+    display: none;
+}
+
 .bill-image-uplaod-btn{
 	width: 100%;
 }
@@ -108,12 +91,38 @@ login, register{
     text-align: center
 }
 
-.led-on-sale-card .back{
-	display: none;
-}
 
 .clickable{
 	cursor: pointer;
+}
+
+.dz-error-mark{
+	display: none;
+}
+
+.dz-success-mark{
+	background-color: green;
+	width: 5%;
+	margin: 0 auto;
+	border-radius: 60%;
+	padding-top: 5px;
+}
+
+.table-overflow{
+	overflow-x: scroll;
+}
+
+.img-thumb-sm{
+	width: 50px;
+	height: 50px;
+}
+
+
+#rep-rate-upload{
+	width: 100%;
+	height: 200px;
+	border: 1px solid green;
+	text-align: center;
 }
 
 @media (max-width: 760px) {

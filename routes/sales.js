@@ -2,7 +2,15 @@ const express = require('express');
 const router = express.Router();
 const sale_controller = require('../controllers/saleController');
 
-// User Routes
-router.get('/sale/:id', sale_controller.new_sale);
+// Sale Routes
+router.get('/', sale_controller.sales_list);
+
+router.get('/sale/:id', sale_controller.sale);
+
+router.get('/new', sale_controller.new_sale);
+
+router.post('/create', sale_controller.create);
+
+router.post('/estimate/yearly', sale_controller.estimate_yearly);
 
 module.exports = router;

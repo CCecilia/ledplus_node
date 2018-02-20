@@ -1,0 +1,176 @@
+extends layout
+
+block content
+	.content
+		.container-fluid
+			.row
+				.col-md-12
+					.card
+						.card-header(data-background-color='green')
+							.row
+								.col-md-6.text-left
+									h4.title #{title}
+								.col-md-6.text-right
+									i#remove-led.fa.fa-minus.fa-2x.clickable(data-id=led._id)
+						.card-content
+							.row
+								.col-md-6.col-md-offset-3
+									if errors 
+										ul(style="color:red;")
+										for error in errors
+											li!= error.msg
+							form(method='POST', enctype="multipart/form-data")
+								.row
+									.col-md-3.text-center
+										if led
+											img(src=led.image, alt=led.name, width='100%', height='auto')
+										label(for='led-image') Replace Image
+										input#led-image(name='led_image', type='file')
+									.col-md-3
+										.form-group.label-floating
+											label.control-label Name
+											input.form-control(name='name', type='text', value=(undefined===led ? '' : led.name))
+										.form-group
+											select.selectpicker.show-tick(name='type', data-style='btn-success', data-width='100%', required='true')
+												if led
+													option(value=led.type, selected=true) #{led.type}
+												else
+													option(value='', data-content="<span style='color: #FFF;'>LED Type</span>")
+												option(value='tube') Tube
+												option(value='u-bend tube') U-Bend Tube
+												option(value='lamp') Lamp
+												option(value='candelabra') Candelabra
+												option(value='spot') Spot
+												option(value='flood') Flood
+												option(value='flood (outdoor)') Flood (outdoor)
+												option(value='track') Track
+												option(value='4 pin') 4 pin
+												option(value='fixture') Fixture
+										.form-group
+											select.selectpicker.show-tick(name='ballast', data-style='btn-success', data-width='100%', required='true')
+												if led
+													option(value=led.ballast.toLowerCase(), selected=true) #{led.ballast}
+												else
+													option(value='', data-content="<span style='color: #FFF;'>Ballast</span>")
+												option(value='electronic') Electronic
+												option(value='magnetic') Magnetic
+									.col-md-3
+										.form-group.label-floating
+											label.control-label Wattage
+											input.form-control(name='wattage', type='number', required='true', max='100', min='0', step='1', value=(undefined===led ? '' : led.wattage))
+										.form-group.label-floating
+											label.control-label Conventional Wattage
+											input.form-control(name='conventional_wattage', type='number', required='true', max='100', min='0', step='1', value=(undefined===led ? '' : led.wattage))
+										.form-group.label-floating
+											label.control-label Display Order Number
+											input.form-control(name='order_number', type='number', required='true', min='0', step='1', value=(undefined===led ? '' : led.order_number))
+									.col-md-3
+										select.selectpicker.show-tick(name='brands', data-style='btn-success', data-width='100%', required='true', multiple)
+											if led
+												if led.brands.includes('Philips')
+													option(value='Philips', selected='true') Philips
+												else
+													option(value='Philips') Philips
+												if led.brands.includes('Forest')
+													option(value='Forest', selected='true') Forest
+												else
+													option(value='Forest') Forest
+												if led.brands.includes('ELB')
+													option(value='ELB', selected='true') ELB
+												else
+													option(value='ELB') ELB
+												if led.brands.includes('Satco')
+													option(value='Satco', selected='true') Satco
+												else
+													option(value='Satco') Satco
+												if led.brands.includes('Sylvania')
+													option(value='Sylvania', selected='true') Sylvania
+												else
+													option(value='Sylvania') Sylvania
+												if led.brands.includes('Way to Go')
+													option(value='Way to Go', selected='true') Way to Go
+												else
+													option(value='Way to Go') Way to Go
+												if led.brands.includes('Green Creative')
+													option(value='Green Creative', selected='true') Green Creative
+												else
+													option(value='Green Creative') Green Creative
+											else
+												option(value='Philips') Philips
+												option(value='Forest') Forest
+												option(value='ELB') ELB
+												option(value='Satco') Satco
+												option(value='Sylvania') Sylvania
+												option(value='Way to Go') Way to Go
+												option(value='Green Creative') Green Creative
+										select.selectpicker.show-tick(name='colors', data-style='btn-success', data-width='100%', required='true', multiple)
+											if led
+												if led.colors.includes('5000K')
+													option(value='5000K', selected='true') 5000K
+												else
+													option(value='5000K') 5000K
+												if led.colors.includes('2700k')
+													option(value='2700K', selected='true') 2700K
+												else
+													option(value='2700K') 2700K	
+											else
+												option(value='5000K') 5000K			
+												option(value='2700k') 2700k	
+										.form-group.label-floating
+											label.control-label Lumens 
+											input.form-control(name='lumens', type='text', value=(undefined===led ? '' : led.lumens))
+										.form-group.label-floating
+											label.control-label Avg Rated Life 
+											input.form-control(name='avg_rated_life', type='text', required='true', min='0', value=(undefined===led ? '' : led.rated_average_life))
+								hr
+								.row
+									.h4.text-primary.text-success.text-center Installation
+									.col-md-2
+										.form-group.label-floating
+											label.control-label 0-50 
+											input.form-control(name='zero_to_fifty', type='number', required='true', min="0.00", max="10000.00", step="0.01", value=(undefined===led ? '' : led.installation_costs.zero_to_fifty))
+									.col-md-2
+										.form-group.label-floating
+											label.control-label 51-200 
+											input.form-control(name='fifty_one_to_two_hundred', type='number', required='true', min="0.00", max="10000.00", step="0.01", value=(undefined===led ? '' : led.installation_costs.fifty_one_to_two_hundred))
+									.col-md-2
+										.form-group.label-floating
+											label.control-label 200-500 
+											input.form-control(name='two_hundred_one_to_five_hundred', type='number', required='true', min="0.00", max="10000.00", step="0.01", value=(undefined===led ? '' : led.installation_costs.two_hundred_one_to_five_hundred))
+									.col-md-2
+										.form-group.label-floating
+											label.control-label 500-1000
+											input.form-control(name='five_hundred_to_one_thousand', type='number', required='true', min="0.00", max="10000.00", step="0.01", value=(undefined===led ? '' : led.installation_costs.five_hundred_to_one_thousand))
+									.col-md-2
+										.form-group.label-floating
+											label.control-label Min Visit Cost
+											input.form-control(name='min_visit_cost', type='number', required='true', min="0.00", max="10000.00", step="0.01", value=(undefined===led ? '' : led.installation_costs.min_visit_cost))
+									.col-md-2
+										.form-group.label-floating
+											label.control-label Premium Ceiling X
+											input.form-control(name='premium_ceiling_multiplier', type='number', required='true', min="0.00", max="10000.00", step="0.01", value=(undefined===led ? '' : led.installation_costs.premium_ceiling_multiplier))
+								hr
+								.row
+									.h4.text-primary.text-success.text-center Pricing
+									.col-md-4
+										.form-group.label-floating
+											label.control-label Net Cost 
+											input.form-control(name='net_cost', type='number', required='true', min="0.00", max="10000.00", step="0.01", value=(undefined===led ? '' : led.pricing.net_cost))
+									.col-md-4
+										.form-group.label-floating
+											label.control-label Sale Price 
+											input.form-control(name='sale_price', type='number', required='true', min="0.00", max="10000.00", step="0.01", value=(undefined===led ? '' : led.pricing.sale_price))
+									.col-md-4
+										.form-group.label-floating
+											label.control-label Non LED Price 
+											input.form-control(name='non_led_price', type='number', required='true', min="0.00", max="10000.00", step="0.01", value=(undefined===led ? '' : led.pricing.non_led_price))
+								.row
+									.col-12.text-center
+										if led
+											button.btn.btn-success(type='submit') Update
+										else
+											button.btn.btn-success(type='submit') Create
+
+
+
+

@@ -6,10 +6,14 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const session = require('express-session');
+const fileUpload = require('express-fileupload');
 
 const index = require('./routes/index');
 const users = require('./routes/users');
 const sales = require('./routes/sales');
+const leds = require('./routes/leds');
+const reps = require('./routes/reps');
+const service_classes = require('./routes/service_classes');
 
 const app = express();
 
@@ -27,7 +31,7 @@ app.set('view engine', 'pug');
 
 app.use(favicon(path.join(__dirname, 'public', 'ledplus_icon.ico')));
 app.use(logger('dev'));
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: "50mb"}));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
@@ -37,10 +41,15 @@ app.use(session({
   saveUninitialized: true,
   cookie: { secure: false }
 }))
+app.use(fileUpload());
 
 app.use('/', index);
 app.use('/users', users);
 app.use('/sales', sales);
+app.use('/LEDs', leds);
+app.use('/serviceClasses', service_classes);
+app.use('/retailEnergyProviders', reps);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

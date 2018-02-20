@@ -1,8 +1,14 @@
 const RetailEnergyProvider = require('../models/retailEnergyProvider');
 const User = require('../models/user');
+const Sale = require('../models/sale');
+const Led = require('../models/led');
 const async = require('async');
 const { body,validationResult } = require('express-validator/check');
 const { sanitizeBody } = require('express-validator/filter');
+
+// remove 
+const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
 
 // Login Page
 exports.login_form = function(req, res) {
@@ -36,7 +42,6 @@ exports.login = [
         }
     }
 ];
-
 
 // Register Page
 exports.register_form = function(req, res, next) {

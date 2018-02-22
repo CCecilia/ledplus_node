@@ -49,15 +49,15 @@ html(lang='en')
 										p Sales		
 							li(class=('Retail Energy Provider'===title ? 'active' : ''))
 									a(href='/retailEnergyProviders/') 
-										i.material-icons assessment
+										i.material-icons business
 										p Retail Energy Provider	
 							li(class=('LEDs'===title ? 'active' : ''))
 									a(href='/LEDs') 
-										i.material-icons assessment
+										i.material-icons lightbulb_outline
 										p LEDs		
 							li(class=('Service Classes'===title ? 'active' : ''))
 									a(href='/serviceClasses') 
-										i.material-icons assessment
+										i.material-icons work
 										p Service Classes	
 			div.main-panel
 				nav.navbar.navbar-transparent.navbar-absolute
@@ -137,6 +137,8 @@ html(lang='en')
 	script(type='text/javascript', src='/javascripts/dropzone.js')
 	//- PapaParse Plugin
 	script(type='text/javascript', src='/javascripts/papaparse.min.js')
+	//- Moment Plugin
+	script(type='text/javascript', src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js')
 	//- Google Maps
 	script(src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDJFB9TXQP3JKkeq6NnrMeby-8HNB2GGh4&amp;libraries=places&amp;callback=initAutocomplete", async="", defer="")
 	//- Global 

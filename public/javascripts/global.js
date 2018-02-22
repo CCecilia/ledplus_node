@@ -128,6 +128,76 @@ function estimateYearlyUsage(){
 
 
 $(document).ready(function(){
+    // Dashboard: daily sales
+    if( $('#dailySalesChart').length ){
+        let daily_sales_chart_data = JSON.parse($('#dailySalesChart').attr('data'));
+
+        let daily_sales_chart_options = {
+            lineSmooth: Chartist.Interpolation.cardinal({
+                tension: 0
+            }),
+            low: 0,
+            high: 20,
+            chartPadding: {
+                top: 0,
+                right: 0,
+                bottom: 0,
+                left: 0
+            },
+        }
+
+        let daily_sales_chart = new Chartist.Line('#dailySalesChart', daily_sales_chart_data, daily_sales_chart_options);
+
+        md.startAnimationForLineChart(daily_sales_chart);
+
+        // handle time since
+        let timer_start = moment();
+        setInterval(function(timerStart){
+            let time_since = moment().diff(timer_start, 'minutes');
+            $('#daily-chart-time-since').text(`Updated ${time_since} minutes ago.`);
+        }, 60000);    
+    }
+
+    // Dashboard: utility sales
+    if( $('#utility-sales-chart').length ){
+        let utility_chart_data = JSON.parse($('#utility-sales-chart').attr('data'));
+
+        let utility_chart_options = {
+            axisX: {
+                showGrid: false
+            },
+            low: 0,
+            high: 20,
+            chartPadding: {
+                top: 0,
+                right: 5,
+                bottom: 0,
+                left: 0
+            }
+        };
+        let responsive_options = [
+            ['screen and (max-width: 640px)', {
+                seriesBarDistance: 5,
+                axisX: {
+                    labelInterpolationFnc: function(value) {
+                        return value[0];
+                    }
+                }
+            }]
+        ];
+        let utility_chart = Chartist.Bar('#utility-sales-chart', utility_chart_data, utility_chart_options, responsive_options);
+
+        //start animation for the Emails Subscription Chart
+        md.startAnimationForBarChart(utility_chart);
+
+        // handle time since
+        let timer_start = moment();
+        setInterval(function(timerStart){
+            let time_since = moment().diff(timer_start, 'minutes');
+            $('#utility-chart-time-since').text(`Updated ${time_since} minutes ago.`);
+        }, 60000);    
+    }
+
     // use current location for service address
     $( '#autofill-service-address' ).click(function(e){
         let currgeocoder;

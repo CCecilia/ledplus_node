@@ -10,8 +10,6 @@ const async = require('async');
 const _ = require('underscore');
 const { body, validationResult } = require('express-validator/check');
 const { sanitizeBody } = require('express-validator/filter');
-
-// remove 
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 

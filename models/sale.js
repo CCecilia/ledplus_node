@@ -115,18 +115,20 @@ SaleSchema.virtual('service_start_date_pretty').get(function(){
 
 SaleSchema.virtual('calculations').get(function(){
     let maintenance_cost = 0;
+    let total_installation_cost = 0;
     let wattage_reduction_total = 0;
     let supply_rate = this.supply_charges / this.monthly_kwh;
     let delivery_rate = this.delivery_charges / this.monthly_kwh;
-    let estimated_annual_supply_charges = supply_rate * this.yearly_kwh
-    let estimated_annual_delivery_charges = delivery_rate * this.yearly_kwh
+    let estimated_annual_supply_charges = supply_rate * this.yearly_kwh;
+    let estimated_annual_delivery_charges = delivery_rate * this.yearly_kwh;
     
     for(let i = 0; i < this.leds.length; i++){
-        maintenance_cost += (this.leds[i].delamping_count + this.leds[i].led_count) * this.leds[i].non_led_price
-        wattage_reduction_total += this.leds[i].wattage_reduction
+        maintenance_cost += (this.leds[i].delamping_count + this.leds[i].led_count) * this.leds[i].pricing.non_led_price;
+        wattage_reduction_total += this.leds[i].wattage_reduction;
+        total_installation_cost += this.leds[i].installation_cost;
     }
 
-    let projected = this.yearly_kwh - wattage_reduction_total
+    let projected = this.yearly_kwh - wattage_reduction_total;
 
     let calculations = {
         annual_maintenance_cost: maintenance_cost,
@@ -137,6 +139,7 @@ SaleSchema.virtual('calculations').get(function(){
         estimated_annual_supply_charges: estimated_annual_supply_charges,
         estimated_annual_delivery_charges: estimated_annual_delivery_charges,
         estimated_annual_charges: estimated_annual_delivery_charges + estimated_annual_supply_charges,
+        total_installation_cost: total_installation_cost
     };
 
     return calculations;
@@ -145,6 +148,13 @@ SaleSchema.virtual('calculations').get(function(){
 SaleSchema.virtual('rate').get(function(){
     let rate;
     let total_installation_cost = 0;
+    let wattage_reduction_total = 0;
+    let total_led_cost = 0;
+    let maintenance_cost = 0;
+    let rep_margin = this.agent.retail_energy_provider.rep_margin;
+    let supply_rate = this.supply_charges / this.monthly_kwh;
+    let delivery_rate = this.delivery_charges / this.monthly_kwh;
+    // find rate
     let rates = _.where(
         this.agent.retail_energy_provider.rates, 
         {
@@ -168,10 +178,38 @@ SaleSchema.virtual('rate').get(function(){
         rate = _.sortBy(filtered_rates, 'rate')[0]
     }
 
-    for(let i = 0; i < this.leds.length; i++){
-        console.log(this.leds[i]);
+    // leds
+    for( let i = 0; i < this.leds.length; i++ ){
+        total_installation_cost += this.leds[i].installation_cost;
+        wattage_reduction_total += this.leds[i].wattage_reduction;
+        total_led_cost += (this.leds[i].pricing.net_cost * this.leds[i].led_count);
+        maintenance_cost += (this.leds[i].delamping_count + this.leds[i].led_count) * this.leds[i].pricing.non_led_price;
     }
 
+    //  LED Plus adder
+    let two_year_projected_usage = (this.yearly_kwh - wattage_reduction_total) * 2;
+    let projected_usage = two_year_projected_usage / 2;
+    rate.led_plus_adder = (total_led_cost + total_installation_cost) * ((1 + rep_margin) / two_year_projected_usage);
+
+    //  New Rate
+    rate.new_rate = (rate.marketing_adder + rate.logistics + rate.rate + rate.led_plus_adder) * rate.sales_tax;
+
+    // 2yr supply savings
+    rate.two_year_supply_savings = ((this.yearly_kwh * supply_rate) - (projected_usage * rate.new_rate)) * 2;
+
+    //  2yr delivery savings
+    rate.two_year_delivery_savings = (wattage_reduction_total * delivery_rate) * 2;
+
+    // 2yr maintenace savings
+    // maintenace cost * estimated number of times bulbs changed * 2 years
+    rate.two_year_maintenance_savings = (maintenance_cost * 2) * 2;
+
+    // 2yr total savings
+    rate.two_year_total_savings = rate.two_year_supply_savings + rate.two_year_delivery_savings + rate.two_year_maintenance_savings;
+
+    // ETF
+    rate.etf = ((rate.led_plus_adder + (total_installation_cost / projected_usage)) * projected_usage) * 2;
+    
     return rate;
 });
 

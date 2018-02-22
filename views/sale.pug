@@ -73,7 +73,7 @@ block content
 													td.text-center #{led.not_replacing_count}
 													td.text-center #{led.wattage_reduction}
 													if led.installation_required === 'true'
-														td.text-center Yes
+														td.text-center $#{led.installation_cost}
 													else
 														td.text-center no
 													if led.ceiling_height === 1
@@ -89,11 +89,11 @@ block content
 							.row
 								.col-md-4
 									p Bulb Maintenace Cost: #{sale.calculations.annual_maintenance_cost}
+									p Total Installation Cost: #{sale.calculations.total_installation_cost}
 									p Annual Consumption Reduction: #{sale.calculations.annual_consumption_reduction}
 									p Projected Usage: #{sale.calculations.projected_usage}
 									p Supply Rate: #{sale.calculations.supply_rate}
 									p Delivery Rate: #{sale.calculations.delivery_rate}
-									p Base Rate: #{sale.rate}
 								.col-md-4
 									if sale.rate
 										p Base Rate: #{sale.rate.rate}
@@ -101,5 +101,16 @@ block content
 										p Marketing: #{sale.rate.marketing_adder}
 										p Logistics: #{sale.rate.logistics}
 										p Max Adder: #{sale.rate.max_adder}
+										p LED Plus Adder: #{sale.rate.led_plus_adder}
+										p New Rate: #{sale.rate.new_rate}
+									else
+										p.text-danger Rate not found
+								.col-md-4
+									if sale.rate
+										p Two Year Supply Savings: #{sale.rate.two_year_supply_savings}
+										p Two Year Delivery Savings: #{sale.rate.two_year_delivery_savings}
+										p Two Year Maintenance Savings: #{sale.rate.two_year_maintenance_savings}
+										p Early Termination Fee: #{sale.rate.etf}
+
 									else
 										p.text-danger Rate not found

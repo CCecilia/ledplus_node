@@ -6,8 +6,15 @@ let RetailEnergyProviderSchema = new Schema({
         type: String,
         required: true
     },
+    logo: {
+        type: String
+    },
     rates: {
         type: Array
+    },
+    rep_margin: {
+        type: Number,
+        default: 0
     }
 });
 

@@ -91,12 +91,15 @@ block content
 									p Bulb Maintenace Cost: #{sale.calculations.annual_maintenance_cost}
 									p Annual Consumption Reduction: #{sale.calculations.annual_consumption_reduction}
 									p Projected Usage: #{sale.calculations.projected_usage}
-									p Supply Rate: #{sale.supply_rate}
-									p Delivery Rate: #{sale.delivery_rate}
-								if rate
-									.col-md-4
-										p Base Rate: #{rate.rate}
-										p EO adder: #{rate.energy_only_adder}
-										p Marketing: #{rate.marketing_adder}
-										p Logistics: #{rate.logistics_adder}
-										p Max Adder: #{rate.max_adder}
+									p Supply Rate: #{sale.calculations.supply_rate}
+									p Delivery Rate: #{sale.calculations.delivery_rate}
+									p Base Rate: #{sale.rate}
+								.col-md-4
+									if sale.rate
+										p Base Rate: #{sale.rate.rate}
+										p EO adder: #{sale.rate.energy_only_adder}
+										p Marketing: #{sale.rate.marketing_adder}
+										p Logistics: #{sale.rate.logistics}
+										p Max Adder: #{sale.rate.max_adder}
+									else
+										p.text-danger Rate not found

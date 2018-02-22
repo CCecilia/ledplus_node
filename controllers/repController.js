@@ -73,7 +73,8 @@ exports.update = [
 
             let template_context = {
                 title: rep.name,
-                rep: rep
+                rep: rep,
+                user: req.session.user
             };
 
             if( !errors.isEmpty() ){
@@ -92,7 +93,12 @@ exports.update = [
                 rep.save(function(err, updated_rep){
                     if(err){ return next(err); }
                     template_context.rep = updated_rep;
-                    res.render('rep_detail', template_context);
+                    User.find({retail_energy_provider: ObjectId(req.params.id)})
+                    .exec(function(err, users){
+                        template_context.users = users
+                        res.render('rep_detail', template_context);
+                    });
+                    
                 });
             } 
         });  

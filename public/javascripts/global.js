@@ -129,7 +129,7 @@ function estimateYearlyUsage(){
 
 $(document).ready(function(){
     // Dashboard: daily sales
-    if( $('#dailySalesChart').length ){
+    if( $( '#dailySalesChart' ).length ){
         let daily_sales_chart_data = JSON.parse($('#dailySalesChart').attr('data'));
 
         let daily_sales_chart_options = {
@@ -159,7 +159,7 @@ $(document).ready(function(){
     }
 
     // Dashboard: utility sales
-    if( $('#utility-sales-chart').length ){
+    if( $( '#utility-sales-chart' ).length ){
         let utility_chart_data = JSON.parse($('#utility-sales-chart').attr('data'));
 
         let utility_chart_options = {
@@ -341,12 +341,13 @@ $(document).ready(function(){
     });
 
     // led: add to sale
-    $( "form[name='led-to-sale-form']" ).submit( function(event) {
+    $( "form[name='led-to-sale-form']" ).submit( function(e) {
         //Stop html form submission
-        event.preventDefault(); 
+        e.preventDefault(); 
 
         // gen LED obj
         let led_id = $(this).attr('data-id');
+        let led_data = JSON.parse($(this).attr('data'));
         let total = Number($(`input[name='led-total'][data-id=${led_id}]`).val());
         let led_count = Number($(`input[name='led-count'][data-id=${led_id}]`).val());
         let delamping = Number($(`input[name='led-delamping'][data-id=${led_id}]`).val());
@@ -354,25 +355,53 @@ $(document).ready(function(){
         let color = $(`.led-color[data-id=${led_id}] option:selected`).val();
         let installation = $(this).find(".active").attr('data-type');
         let ceiling_height = Number($(`.ceiling-height-dropdown[data-id=${led_id}] option:selected`).val());
-        
-        let led = {
-            id: Math.floor((Math.random() * 100) + 1),
-            led_id: led_id,
-            total_lights: total,
-            led_count: led_count,
-            delamping: delamping,
-            not_replacing: not_replacing,
+        let installation_cost = 0;
+        let led_wattage_reduction =  (led_data.conventional_wattage - led_data.wattage) * led_count;
+        let delamp_wattage_reduction = led_data.conventional_wattage * delamping;
+        let total_wattage_reduction = led_wattage_reduction + delamp_wattage_reduction
+        let total_kWh_reduction = ( total_wattage_reduction * Number($("input[name='total']").val()) ) / 1000
+
+        // handle installation costs
+        if( installation ){
+            if( led_count <= 50 ){
+                installation_cost = led_data.installation_costs.zero_to_fifty * led_count
+            } else if( led_count >= 51 && led_count <= 200 ){
+                installation_cost = led_data.installation_costs.fifty_one_to_two_hundred * led_count
+            } else if( led_count >= 201 && led_count <= 500 ){
+                installation_cost = led_data.installation_costs.two_hundred_one_to_five_hundred * led_count
+            } else if( led_count >= 501){
+                installation_cost = led_data.installation_costs.five_hundred_to_one_thousand * led_count
+            }
+
+            // Premium Ceiling Multiplier
+            if( ceiling_height === 1 ) {
+                // Add in premium ceiling height multiplier for being over 16 feet
+                installation_cost = installation_cost * led.installation_costs.premium_ceiling_multiplier
+            } 
+        }
+
+        let sale_led = {
+            temp_id: Math.floor((Math.random() * 100) + 1),
+            name: led_data.name,
+            type: led_data.type,
+            image: led_data.image,
             color: color,
-            installation: installation,
+            led_count: led_count,
+            total_count: total,
+            not_replacing_count: not_replacing,
+            delamping_count: delamping,
+            wattage_reduction: total_kWh_reduction,
+            installation_required: installation,
             ceiling_height: ceiling_height,
-            non_led_price: JSON.parse($(this).attr('data')).pricing.non_led_price
+            pricing: led_data.pricing,
+            installation_cost: installation_cost
         };
 
         // add led to sale
-        new_sale.leds.push(led);
-        // clone element into selected
+        new_sale.leds.push(sale_led);
+        // clone element into selected col
         $(`.led-counts[data-id=${led_id}]`).slideUp();
-        $(`.led-option[data-id=${led_id}]`).clone().addClass('led-on-sale').prop({'id': led.id, "draggable": true}).appendTo('#selected-leds');
+        $(`.led-option[data-id=${led_id}]`).clone().addClass('led-on-sale').prop({'id': sale_led.temp_id, "draggable": true}).appendTo('#selected-leds');
     });
 
     // utility dropdown: set account number max length
@@ -386,14 +415,14 @@ $(document).ready(function(){
     });
 
     // monthly usage: estimate yearly
-    $('input[name="monthly_usage"]').keyup( _.debounce(estimateYearlyUsage, 500) );
+    $( 'input[name="monthly_usage"]' ).keyup( _.debounce(estimateYearlyUsage, 500) );
 
     // service start date
-    $("input[name='service_start_date']").datepicker();
+    $( "input[name='service_start_date']" ).datepicker();
 
 
     // service start: date notification 
-    $("input[name='service_start_date']").on('change', function(e){
+    $( "input[name='service_start_date']" ).on('change', function(e){
         service_date = $(this).val();
         if( service_date.substring(3, 5) !== '01'){
             $.notify({
@@ -408,7 +437,7 @@ $(document).ready(function(){
     });
 
     // Handle bill image
-    $('#bill-image').on('change', function(e) {
+    $( '#bill-image' ).on('change', function(e) {
         let bill_image = document.getElementById('bill-image').files[0];
         var reader = new FileReader();
         reader.onloadend = function() {
@@ -528,26 +557,26 @@ $(document).ready(function(){
     } );
 
     // sales table: clicks
-    $('#sales-table tbody').on('click', 'tr', function () {
+    $( '#sales-table tbody' ).on('click', 'tr', function () {
         let table = $('#sales-table');
         var data = sales_table.row( this ).data();
         window.location = window.location.protocol + "//" + window.location.host + "/sales/sale/"+data[0]
     } ); 
 
     // rep table
-    let rep_table = $('#rep-table').DataTable( {
+    let rep_table = $( '#rep-table' ).DataTable( {
         stateSave: true,
     } );
 
     // rep table: clicks
-    $('#rep-table tbody').on('click', 'tr', function () {
+    $( '#rep-table tbody' ).on('click', 'tr', function () {
         let table = $('#rep-table');
         var data = rep_table.row( this ).data();
         window.location = window.location.protocol + "//" + window.location.host + "/retailEnergyProviders/details/"+data[0]
     } ); 
 
     // rep detail: rate upload
-    $('input[name=rate-sheet-upload]').on('change', function(e){
+    $( 'input[name=rate-sheet-upload]' ).on('change', function(e){
         let rate_sheet = e.target.files[0];
         let rep_id = $(this).attr('data-id');
 
@@ -575,7 +604,7 @@ $(document).ready(function(){
                     success: function(data){
                         if( data.status === 200){
                             $.notify({
-                                message: 'Your rate have been successfully uploaded.'
+                                message: 'Your rates have been successfully uploaded.'
                             },{
                                 type: 'success'
                             });
@@ -604,7 +633,7 @@ $(document).ready(function(){
     });
 
     // rep detail: rates table
-    $('#rates-table').DataTable( {
+    $( '#rates-table' ).DataTable( {
         stateSave: true,
         dom: 'Bfrtip',
         buttons: [
@@ -614,19 +643,19 @@ $(document).ready(function(){
     } ); 
 
     // LED table
-    let led_table = $('#led-table').DataTable( {
+    let led_table = $( '#led-table' ).DataTable( {
         stateSave: true,
     } );
 
     // LED table: clicks
-    $('#led-table tbody').on('click', 'tr', function () {
+    $( '#led-table tbody' ).on('click', 'tr', function () {
         let table = $('#led-table');
         var data = led_table.row( this ).data();
         window.location = window.location.protocol + "//" + window.location.host + "/LEDs/details/"+data[0]
     }); 
 
     // LED: Remove
-    $('#remove-led').click(function(e){
+    $( '#remove-led' ).click(function(e){
         var result = confirm("Are you  sure you wish to delete LED.");
         if (result) {
             $.ajax({
@@ -654,12 +683,12 @@ $(document).ready(function(){
     });
 
     // Service Class table
-    let service_class_table = $('#service-class-table').DataTable( {
+    let service_class_table = $( '#service-class-table' ).DataTable( {
         stateSave: true,
     } );
 
     // Service Class table: clicks
-    $('#service-class-table tbody').on('click', 'tr', function () {
+    $( '#service-class-table tbody' ).on('click', 'tr', function () {
         let table = $('#service-class-table');
         var data = service_class_table.row( this ).data();
         window.location = window.location.protocol + "//" + window.location.host + "/serviceClasses/details/"+data[0]

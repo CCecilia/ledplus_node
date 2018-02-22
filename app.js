@@ -15,6 +15,7 @@ const sales = require('./routes/sales');
 const leds = require('./routes/leds');
 const reps = require('./routes/reps');
 const service_classes = require('./routes/service_classes');
+const state_rates = require('./routes/state_rates');
 
 const User = require('./models/user');
 
@@ -79,6 +80,7 @@ app.use('/sales', sales);
 app.use('/LEDs', leds);
 app.use('/serviceClasses', service_classes);
 app.use('/retailEnergyProviders', reps);
+app.use('/stateRates', state_rates);
 
 
 // catch 404 and forward to error handler

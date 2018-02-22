@@ -1,0 +1,25 @@
+extends layout
+
+block content
+	.content
+		.container-fluid
+			.row
+				.col-md-12
+					.card
+						.card-header(data-background-color='green')
+							.row
+								.col-md-12
+									h4.title #{title}
+						.card-content.table-responsive
+							table#state-rate-table.table
+								thead
+									th State
+									th Supply Rate
+									th Delivery Rate
+								tbody
+									for rate in state_rate_list 
+										tr.clickable 
+											td #{rate._id}
+											td #{rate.state}
+											td #{rate.supply_rate}
+											td #{rate.delivery_rate}

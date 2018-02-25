@@ -4,7 +4,7 @@ const StateRate = require('../models/stateRate');
 exports.state_rate_list = function(req, res, next) {
     StateRate.find()
     .exec(function(err, state_rate_list){
-        if(err){ return next(err); }
+        if(err){ console.log( err); return next(err); }
 
         let template_context = {
             title: 'State Rates',

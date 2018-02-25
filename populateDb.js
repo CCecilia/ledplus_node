@@ -134,3 +134,19 @@ scaler = new AnnualScaler({
         december: 0.0795
     }
 })
+
+
+
+StateRate.insertMany([
+    {state:  'AL',  supply_rate: .122,  delivery_rate: 0},
+    {state:  'AK',  supply_rate: .193,  delivery_rate: 0},
+    {state:  'AZ',  supply_rate: .122,  delivery_rate: 0},
+    {state:  'AR',  supply_rate: .096,  delivery_rate: 0},
+    {state:  'CA',  supply_rate: .167,  delivery_rate: 0},
+    {state:  'CO',  supply_rate: .123,  delivery_rate: 0},
+    {state:  'CT',  supply_rate: .199,  delivery_rate: 0.06},
+    {state:  'DE',  supply_rate: .151,  delivery_rate: 0},
+    {state:  'NJ',  supply_rate: .179,  delivery_rate: 0.06},
+    {state:  'NY',  supply_rate: .199,  delivery_rate: 0.11},
+    {state:  'PA',  supply_rate: .145,  delivery_rate: 0.06},
+]);

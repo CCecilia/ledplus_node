@@ -8,6 +8,7 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
 const fileUpload = require('express-fileupload');
+var config = require('./_config');
 
 const index = require('./routes/index');
 const users = require('./routes/users');
@@ -22,8 +23,15 @@ const User = require('./models/user');
 const app = express();
 
 // database setup
-const mongoDB = 'mongodb://localhost:27017/ledplus';
-mongoose.connect(mongoDB);
+// const mongoDB = 'mongodb://localhost:27017/ledplus';
+// mongoose.connect(mongoDB);
+mongoose.connect(config.mongoURI[app.settings.env], function(err, res) {
+  if(err) {
+    console.log('Error connecting to the database. ' + err);
+  } else {
+    console.log('Connected to Database: ' + config.mongoURI[app.settings.env]);
+  }
+});
 mongoose.Promise = global.Promise;
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
@@ -40,7 +48,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 const store = new MongoDBStore({
-  uri: mongoDB,
+  uri: config.mongoURI[app.settings.env],
     collection: 'user_session'
   });
   // Catch errors

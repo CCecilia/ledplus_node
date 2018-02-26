@@ -97,11 +97,28 @@ exports.register = [
 
             // save user
             user.save(function(err){
-                if(err) { return next(err); }
+                if(err) {
+                    // duplicate key error
+                    if( err.code === 11000){
+                        RetailEnergyProvider.find({},'name')
+                        .exec(function (err, reps) {
+                            if (err) { return next(err); }
 
-                req.session.user = user;
+                            let template_context = {
+                                title: 'Register', 
+                                rep_list: reps,
+                                errors: [{msg: 'Email already in use'}]
+                            }
 
-                res.redirect(user.dashboard);
+                            res.render('register', template_context);
+                        });
+                    } else {
+                        return next(err); 
+                    }
+                } else {
+                    req.session.user = user;
+                    res.redirect(user.dashboard);
+                }
             });
         }
     }

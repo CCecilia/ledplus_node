@@ -200,14 +200,13 @@ $(document).ready(function(){
 
     // use current location for service address
     $( '#autofill-service-address' ).click(function(e){
+        $( '#autofill-service-address' ).addClass('fa-spin');
         let currgeocoder;
 
         navigator.geolocation.getCurrentPosition(function(position, html5Error) {
-
             geo_loc = processGeolocationResult(position);
             currLatLong = geo_loc.split(",");
             initializeCurrent(currLatLong[0], currLatLong[1]);
-
         });
 
         function processGeolocationResult(position) {
@@ -233,6 +232,7 @@ $(document).ready(function(){
 
             }, function(results, status) {
                 if (status == google.maps.GeocoderStatus.OK) {
+                    $( '#autofill-service-address' ).removeClass('fa-spin');
                     let location = results[0].address_components;
                     // autofill: street address
                     $( 'input[name="service_address"], input[name="billing_address"]' )
@@ -254,10 +254,11 @@ $(document).ready(function(){
                     .val(`${location[6].long_name}-${location[7].long_name}`)
                     .parent().removeClass('is-empty');
                 } else {
+                    $( '#autofill-service-address' ).removeClass('fa-spin');
                     alert('Location lookup was not successful for the following reason: ' + status);
                 }
             });
-         }
+        }        
     });
 
     // duplicating service to billing address: street address

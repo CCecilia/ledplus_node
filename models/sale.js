@@ -209,7 +209,7 @@ SaleSchema.virtual('rate').get(function(){
 
     // ETF
     rate.etf = ((rate.led_plus_adder + (total_installation_cost / projected_usage)) * projected_usage) * 2;
-    
+
     return rate;
 });
 

@@ -4,6 +4,7 @@ const Utility = require('../models/utility');
 const SubType = require('../models/subType');
 const Led = require('../models/led');
 const Sale = require('../models/sale');
+const StateRate = require('../models/stateRate');
 const AnnualScaler = require('../models/annualConsumptionScaler');
 const RetailEnergyProvider = require('../models/retailEnergyProvider');
 const async = require('async');
@@ -12,6 +13,7 @@ const { body, validationResult } = require('express-validator/check');
 const { sanitizeBody } = require('express-validator/filter');
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
+const debug = require('debug')('sale');
 
 // titling
 String.prototype.toProperCase = function () {
@@ -33,7 +35,10 @@ exports.sales_list = function(req, res, next) {
             }  
         }
     },function(err, results){
-        if(err){return next(err);}
+        if(err){
+            debug(`error @ sales list: ${err}`);
+            return next(err);
+        }
         
         let template_context = {
             title: 'Sales',
@@ -47,14 +52,6 @@ exports.sales_list = function(req, res, next) {
 
 // new Sale: page
 exports.new_sale = function(req, res, next) {
-    // let user = req.session.user;
-    let user = {
-        _id: ObjectId("5a7e269087cf600907bb3ae8"),
-        admin: false,
-        email : 'christian.cecilia1@gmail.com',
-        password : '$2a$08$N5EjrC9VdIHzQ5Qmr8vReeJv1aW09YPI/Cr3u3ea.qpo3H7WnMXWO',
-        retail_energy_provider : ObjectId('5a7e0075110dfbb0b28b7152')
-    }
     async.parallel({
         subtype_list: function(callback){
             SubType.find()
@@ -77,13 +74,18 @@ exports.new_sale = function(req, res, next) {
             .exec(callback);
         }
     }, function(err, results){
+        if(err){
+            debug(`error @ new sale: ${err}`);
+            return next(err);
+        }
+
         template_context = {
             title: 'New Sale',
             subtype_list: results.subtype_list,
             led_list: results.led_list,
             utility_list: results.utility_list,
             service_class_list: results.service_class_list,
-            user: user
+            user: req.session.user
         };
 
         res.render('new_sale', template_context);
@@ -99,6 +101,7 @@ exports.estimate_yearly = function(req, res, next){
         service_class: ObjectId(req.body.service_class)
     }).exec(function(err, found_scaler){
         if(err){
+            debug(`error @ estimate yearly: ${err}`);
             res.json({
                 'status': 500,
                 'error': 'Error during annual scaler find'
@@ -139,34 +142,62 @@ exports.create = function(req, res, next){
         leds: req.body.leds
     });
     new_sale.save(function(err){
-        if(err) { return next(err); }
+        if(err){
+            debug(`error @ create sale: ${err}`);
+            return next(err);
+        }
         res.json({status: 200, sale_url: new_sale.sale_page});
     });
 };
 
 // Sale
 exports.sale = function(req, res, next) {
-    Sale.findById(req.params.id)
-    .populate('subtype')
-    .populate('utility', 'name')
-    .populate('service_class')
-    .populate({path: 'agent', populate: {path: 'retail_energy_provider'}})
-    .exec(function(err, sale){
-        if(err) {return next(err)}
-
-        if( sale===null ) { 
-            var err = new Error('Sale not found');
-            err.status = 404;
+    async.parallel({
+        sale: function(callback){
+            Sale.findById(req.params.id)
+            .populate('subtype')
+            .populate('utility', 'name')
+            .populate('service_class')
+            .populate({path: 'agent', populate: {path: 'retail_energy_provider'}})
+            .exec(callback);
+        },
+        state_rate: function(callback){
+            Sale.findById(req.params.id, {'service_address.state': 1})
+            .exec(function(err, sale){
+                if(err){
+                    debug(`error @ finding state rate: ${err}`);
+                }
+                StateRate.findOne({state: sale.service_address.state})
+                .exec(callback);
+            }); 
+        }
+    },function(err, results){
+        if(err){
+            debug(`error @ sale: ${err}`);
             return next(err);
         }
 
+        if( results.sale === null ) { 
+            var err = new Error('Sale not found');
+            debug(`error @ sale: ${err}`);
+            err.status = 404;
+            return next(err);
+        }
+        
+        // handle 3-5, 3-10yr savings
+        if( results.sale.rate && results.state_rate ){
+            results.sale.rate.three_five_year_savings = (results.sale.calculations.annual_consumption_reduction * results.state_rate.supply_rate) * 3;
+            results.sale.rate.three_ten_year_savings = (results.sale.calculations.annual_consumption_reduction * results.state_rate.supply_rate) * 8;
+            results.sale.rate.five_year_savings = results.sale.rate.three_five_year_savings + results.sale.rate.two_year_supply_savings;
+            results.sale.rate.ten_year_savings = results.sale.rate.three_ten_year_savings + results.sale.rate.two_year_supply_savings;
+        }
 
         let template_context = {
-            title: sale.business_name.toProperCase(),
+            title: results.sale.business_name.toProperCase(),
             user: req.session.user,
-            sale: sale
+            sale: results.sale
         };
 
         res.render('sale', template_context);
-    });
+    }) 
 };

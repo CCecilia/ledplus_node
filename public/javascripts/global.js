@@ -105,26 +105,27 @@ function estimateYearlyUsage(){
     }  
 }
 
-// Dropzone.options.repRateUpload = {
-//     paramName: 'rate_sheet',
-//     maxFilesize: 10,
-//     method: 'post',
-//     maxFiles: 1,
-//     acceptedFiles: '.csv',
-//     dictDefaultMessage: 'Drop rate sheet here.',
-//     dictInvalidFileType: 'Rate sheets need to be in .csv format.',
-//     url: document.URL,
-//     accept: function(file, done) {
-//         console.log(file);
-//         // if (file.name == $('.dz-success-mark').show(); 
-//         done();
-//     },
-//     init: function() {
-//         this.on("complete", function(file) { 
-//             $('.dz-success-mark').show(); 
-//         });
-//     }
-// };
+Dropzone.options.pendingResiSalesUpload = {
+    url: '/sales/residential/upload/pending',
+    paramName: 'pending_sales',
+    maxFilesize: 10,
+    method: 'post',
+    maxFiles: 1,
+    acceptedFiles: '.csv',
+    dictDefaultMessage: 'Drop pending sales here.',
+    dictInvalidFileType: 'Sale sheets need to be in .csv format.',
+    url: document.URL,
+    accept: function(file, done) {
+        console.log(file);
+        // if (file.name == $('.dz-success-mark').show(); 
+        done();
+    },
+    init: function() {
+        this.on("complete", function(file) { 
+            $('.dz-success-mark').show(); 
+        });
+    }
+};
 
 
 $(document).ready(function(){
@@ -435,7 +436,6 @@ $(document).ready(function(){
     // service start date
     $( "input[name='service_start_date']" ).datepicker();
 
-
     // service start: date notification 
     $( "input[name='service_start_date']" ).on('change', function(e){
         service_date = $(this).val();
@@ -577,6 +577,13 @@ $(document).ready(function(){
         var data = sales_table.row( this ).data();
         window.location = window.location.protocol + "//" + window.location.host + "/sales/sale/"+data[0]
     } ); 
+
+    // residential sales table
+    $( '#residential-sales-table' ).DataTable( {
+        stateSave: true
+    } );
+
+    // residential sales
 
     // rep table
     let rep_table = $( '#rep-table' ).DataTable( {

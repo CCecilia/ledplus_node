@@ -8,7 +8,7 @@ block content
 					.card
 						.card-header(data-background-color='green')
 							h4.title Sales
-							p.category Here is a subtitle for this table
+							//- p.category Here is a subtitle for this table
 						.card-content.table-responsive
 							table#sales-table.table
 								thead
@@ -26,3 +26,68 @@ block content
 											else
 												td n/a
 											td #{sale.date_created_pretty}
+			.row
+				.col-md-12
+					.card
+						.card-header(data-background-color='green')
+							.row
+								.col-md-6.text-left
+									h4.title Residential Sales
+								.col-md-6.text-right
+									i.fa.fa-upload.fa-2x.clickable(data-toggle="modal", data-target="#resi-sales-upload-modal")
+							//- p.category Here is a subtitle for this table
+						.card-content.table-responsive
+							table#residential-sales-table.table
+								thead
+									th ID
+									th Business Name
+									th Subtype
+									th Date Created
+								tbody
+									for sale in resi_sales 
+										tr.clickable
+											td #{sale._id} 
+											td #{sale.business_name}
+											if sale.subtype
+												td #{sale.subtype.name}
+											else
+												td n/a
+											td #{sale.date_created_pretty}
+			// Modal
+			#resi-sales-upload-modal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='resi-sales-upload-title', aria-hidden='true')
+				.modal-dialog(role='document')
+					.modal-content
+						.modal-header
+							h5#resi-sales-upload-title.modal-title Upload Options
+							.nav-tabs-navigation(data-background-color='green')
+								.nav-tabs-wrapper
+									//- span.nav-tabs-title Upload Options:
+									ul.nav.nav-tabs(data-tabs='tabs')
+										li.active
+											a(href='#pending', data-toggle='tab')
+												i.fa.fa-cart-arrow-down
+												|  Pending
+												.ripple-container
+										li
+											a(href='#fulfillment', data-toggle='tab')
+												i.fa.fa-truck
+												|  Fulfillment
+												.ripple-container
+										li
+											a(href='#enrollments', data-toggle='tab')
+												i.material-icons cloud
+												|  Statuses
+												.ripple-container
+						.modal-body
+							.tab-content
+								#pending.tab-pane.active
+									form#pendingResiSalesUpload.dropzone()
+										.fallback
+											input(name='file', type='file', multiple='')
+								#fulfillment.tab-pane
+									p Fulfillment
+								#enrollments.tab-pane
+									p Enrollments
+						.modal-footer
+							button.btn.btn-secondary(type='button', data-dismiss='modal') Close
+							button.btn.btn-primary(type='button') Save changes

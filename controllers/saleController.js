@@ -4,6 +4,7 @@ const Utility = require('../models/utility');
 const SubType = require('../models/subType');
 const Led = require('../models/led');
 const Sale = require('../models/sale');
+const ResidentialSale = require('../models/residentialSale');
 const StateRate = require('../models/stateRate');
 const AnnualScaler = require('../models/annualConsumptionScaler');
 const RetailEnergyProvider = require('../models/retailEnergyProvider');
@@ -14,6 +15,8 @@ const { sanitizeBody } = require('express-validator/filter');
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 const debug = require('debug')('sale');
+const fileUpload = require('express-fileupload');
+const fs = require('fs');
 
 // titling
 String.prototype.toProperCase = function () {
@@ -29,10 +32,14 @@ exports.sales_list = function(req, res, next) {
                 .populate('subtype')
                 .exec(callback);
             } else {
-                Sale.find({ agent: ObjectId("5a7e269087cf600907bb3ae8") })
+                Sale.find({ agent: req.session.user._id })
                 .populate('subtype')
                 .exec(callback);
             }  
+        },
+        resi_sales: function(callback){
+            ResidentialSale.find()
+            .exec(callback);
         }
     },function(err, results){
         if(err){
@@ -43,7 +50,8 @@ exports.sales_list = function(req, res, next) {
         let template_context = {
             title: 'Sales',
             sales: results.sales,
-            user: req.session.user
+            user: req.session.user,
+            resi_sales: results.resi_sales
         };
 
         res.render('sales', template_context);
@@ -200,4 +208,18 @@ exports.sale = function(req, res, next) {
 
         res.render('sale', template_context);
     }) 
+};
+
+// Resi Sales Upload: pending
+exports.upload_pending_residential = function(req, res, next){
+    if (!req.files){
+        debug(`error @ pending sale upload: ${err}`);
+        return res.status(400).send('No files were uploaded.');
+    }
+
+    let pending_sales = req.files.pending_sales;
+
+    console.log(pending_sales);
+
+    return res.status(200).send();
 };

@@ -8,6 +8,7 @@ const ResidentialSale = require('../models/residentialSale');
 const StateRate = require('../models/stateRate');
 const AnnualScaler = require('../models/annualConsumptionScaler');
 const RetailEnergyProvider = require('../models/retailEnergyProvider');
+const Brand = require('../models/brand');
 const async = require('async');
 const _ = require('underscore');
 const { body, validationResult } = require('express-validator/check');
@@ -15,18 +16,19 @@ const { sanitizeBody } = require('express-validator/filter');
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 const debug = require('debug')('sale');
-const fileUpload = require('express-fileupload');
-const fs = require('fs');
+// const fileUpload = require('express-fileupload');
+// const fs = require('fs');
+const moment = require('moment');
 
 // titling
-String.prototype.toProperCase = function () {
-    return this.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+String.prototype.toProperCase = () => {
+    return this.replace(/\w\S*/g, (txt) => {return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 };
 
 // Sales List
-exports.sales_list = function(req, res, next) {
+exports.sales_list = (req, res, next) => {
     async.parallel({
-        sales: function(callback){
+        sales: (callback) => {
             if(req.session.user.admin){
                 Sale.find()
                 .populate('subtype')
@@ -37,11 +39,14 @@ exports.sales_list = function(req, res, next) {
                 .exec(callback);
             }  
         },
-        resi_sales: function(callback){
+        resi_sales: (callback) => {
             ResidentialSale.find()
+            .populate('company.retail_energy_provider', 'name')
+            .populate('company.brand', 'name')
+            .populate('utility', 'name')
             .exec(callback);
         }
-    },function(err, results){
+    }, (err, results) => {
         if(err){
             debug(`error @ sales list: ${err}`);
             return next(err);
@@ -59,29 +64,29 @@ exports.sales_list = function(req, res, next) {
 };
 
 // new Sale: page
-exports.new_sale = function(req, res, next) {
+exports.new_sale = (req, res, next) => {
     async.parallel({
-        subtype_list: function(callback){
+        subtype_list: (callback) => {
             SubType.find()
             .sort({name: 1})
             .exec(callback);
         },
-        utility_list: function(callback) {
+        utility_list: (callback) =>  {
             Utility.find()
             .sort({name: 1})
             .exec(callback);
         },
-        service_class_list: function(callback) {
+        service_class_list: (callback) =>  {
             ServiceClass.find()
             .sort({name: 1})
             .exec(callback);
         },
-        led_list: function(callback){
+        led_list: (callback) => {
             Led.find()
             .sort({order_number: 1})
             .exec(callback);
         }
-    }, function(err, results){
+    }, (err, results) => {
         if(err){
             debug(`error @ new sale: ${err}`);
             return next(err);
@@ -101,13 +106,13 @@ exports.new_sale = function(req, res, next) {
 };
 
 // new sale: estimate yearly usage
-exports.estimate_yearly = function(req, res, next){
+exports.estimate_yearly = (req, res, next) => {
     let weight = 0.0804;  // default weight
     AnnualScaler.findOne({
         state: String(req.body.state).toUpperCase(),
         utility: ObjectId(req.body.utility),
         service_class: ObjectId(req.body.service_class)
-    }).exec(function(err, found_scaler){
+    }).exec((err, found_scaler) => {
         if(err){
             debug(`error @ estimate yearly: ${err}`);
             res.json({
@@ -129,8 +134,8 @@ exports.estimate_yearly = function(req, res, next){
 };
 
 // new sale: create
-exports.create = function(req, res, next){
-    new_sale = new Sale({
+exports.create = (req, res, next) => {
+    let new_sale = new Sale({
         agent: ObjectId(req.session.user._id),
         business_name: req.body.business_name,
         authorized_representative: req.body.authorized_representative,
@@ -149,7 +154,7 @@ exports.create = function(req, res, next){
         bill_image: req.body.bill_image,
         leds: req.body.leds
     });
-    new_sale.save(function(err){
+    new_sale.save((err) => {
         if(err){
             debug(`error @ create sale: ${err}`);
             return next(err);
@@ -159,9 +164,9 @@ exports.create = function(req, res, next){
 };
 
 // Sale
-exports.sale = function(req, res, next) {
+exports.sale = (req, res, next) => {
     async.parallel({
-        sale: function(callback){
+        sale: (callback) => {
             Sale.findById(req.params.id)
             .populate('subtype')
             .populate('utility', 'name')
@@ -169,9 +174,9 @@ exports.sale = function(req, res, next) {
             .populate({path: 'agent', populate: {path: 'retail_energy_provider'}})
             .exec(callback);
         },
-        state_rate: function(callback){
+        state_rate: (callback) => {
             Sale.findById(req.params.id, {'service_address.state': 1})
-            .exec(function(err, sale){
+            .exec((err, sale) => {
                 if(err){
                     debug(`error @ finding state rate: ${err}`);
                 }
@@ -179,7 +184,7 @@ exports.sale = function(req, res, next) {
                 .exec(callback);
             }); 
         }
-    },function(err, results){
+    }, (err, results) => {
         if(err){
             debug(`error @ sale: ${err}`);
             return next(err);
@@ -211,15 +216,121 @@ exports.sale = function(req, res, next) {
 };
 
 // Resi Sales Upload: pending
-exports.upload_pending_residential = function(req, res, next){
-    if (!req.files){
-        debug(`error @ pending sale upload: ${err}`);
-        return res.status(400).send('No files were uploaded.');
-    }
+exports.handle_pending_sale = (req, res, next) => {
+    async.parallel({
+        retail_energy_provider: (callback) => {
+            RetailEnergyProvider.findOne({name: req.body.company}, {_id: 1})
+            .exec(callback);
+        },
+        brand: (callback) => {
+            Brand.findOne({name: req.body.brand}, {_id: 1})
+            .exec(callback);
+        },
+        existing_customer_check: (callback) => {
+            ResidentialSale.findOne(
+                {$or: [
+                    {"account_number.utility_account": req.body.utility_account_number}, 
+                    {"account_number.rep_account": req.body.rep_customer_id}
+                ]
+            })
+            .exec(callback);
+        },
+        utility: (callback) => {
+            Utility.findOne({name: req.body.utility}, {_id: 1})
+            .exec(callback);
+        }
+    }, (err, results) =>{
+        if( err ){
+            debug(`error @ resi sales upload: ${err}`);
+            req.body.error_msg = 'Error during sale extrapalation';
+            return res.send({status: 500, sale: req.body});
+        }
 
-    let pending_sales = req.files.pending_sales;
+        if( !results.retail_energy_provider ){
+            req.body.error_msg = 'Failed to identify REP';
+            return res.send({status: 500, sale: req.body});
+        }
 
-    console.log(pending_sales);
+        if( !results.brand ){
+            req.body.error_msg = 'Failed to identify brand';
+            return res.send({status: 500, sale: req.body});
+        }
+                    
+        if( !results.utility ){
+            req.body.error_msg = 'Failed to identify utility';
+            return res.send({status: 500, sale: req.body});
+        }
 
-    return res.status(200).send();
+        // update existing sale
+        if( results.existing_customer_check ){
+                sale_to_update.name.first_name = req.body.first_name;
+                sale_to_update.name.last_name = req.body.last_name;
+                sale_to_update.address.street_address = req.body.address_line_one;
+                sale_to_update.address.street_address_line_two = req.body.address_line_two;
+                sale_to_update.address.city = req.body.city;
+                sale_to_update.address.state = req.body.state;
+                sale_to_update.address.zip_code = req.body.state;
+                sale_to_update.utility = results.utility._id;
+                sale_to_update.account_number.utility_account = req.body.utility_account_number;
+                sale_to_update.account_number.rep_account = req.body.rep_customer_id;
+
+                if( req.body.cancellation_date ){
+                    sale_to_update.status.enrolled = false
+                    sale_to_update.status.canceled = true
+                    sale_to_update.status.cancellation_date = Date(req.body.cancellation_date);
+                }
+
+                sale_to_update.shipping.ship_date.projected = Date(req.body.projected_ship_date);
+                sale_to_update.shipping.packages = req.body.number_of_packages;
+                sale_to_update.shipping.led_package = req.body.led_type;
+
+
+                res.send({status: 200});
+        } else {
+            let new_sale = new ResidentialSale({
+                name: {
+                    first_name: req.body.first_name,
+                    last_name: req.body.last_name,
+                },
+                address: {
+                    street_address: req.body.address_line_one,
+                    street_address_line_two: req.body.address_line_two,
+                    city: req.body.city,
+                    state: req.body.state,
+                    zip_code: req.body.zip_code,
+                },
+                status: {
+                    enrollment_date: Date(req.body.enrollment_date)
+                },
+                shipping: {
+                        ship_date: {
+                        projected: Date(req.body.projected_ship_date),
+                        packages: req.body.number_of_packages,
+                        led_package: req.body.led_type
+                    }
+                },
+                utility: results.utility._id,
+                account_number: {
+                    utility_account: req.body.utility_account_number,
+                    rep_account: req.body.rep_customer_id
+                },
+                company: {
+                    retail_energy_provider: results.retail_energy_provider._id,
+                    brand: results.brand._id,
+                    channel: req.body.channel
+                },
+                last_updated: Date.now()
+            });
+
+            // Create new
+            new_sale.save((err, sale_created) => {
+                if( err ){
+                    req.body.error_msg = `Failed to save: ${err}`;
+                    return res.send({status: 500, sale: req.body});
+                }
+                req.body._id = sale_created._id;
+                res.send({status: 201,  sale:req.body});
+            }); 
+        }
+    });
 };

@@ -5,9 +5,9 @@ const fs = require('fs');
 const ServiceClass = require('../models/serviceClass');
 
 // ServiceClass: list
-exports.service_class_list = function(req, res, next) {
+exports.service_class_list = (req, res, next) => {
     ServiceClass.find()
-    .exec(function(err, service_classes){
+    .exec((err, service_classes) => {
         if(err){ return next(err); }
 
         let template_context = {

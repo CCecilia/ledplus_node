@@ -91,11 +91,11 @@ let LedSchema = new Schema({
     }
 });
 
-LedSchema.virtual('wattage_difference').get(function(){
+LedSchema.virtual('wattage_difference').get(() => {
     return this.conventional_wattage - this.wattage;
 });
 
-LedSchema.virtual('detail_page').get(function(){
+LedSchema.virtual('detail_page').get(() => {
     return `/LEDs/details/${this._id}`;
 });
 

@@ -34,26 +34,119 @@ block content
 								.col-md-6.text-left
 									h4.title Residential Sales
 								.col-md-6.text-right
-									i.fa.fa-upload.fa-2x.clickable(data-toggle="modal", data-target="#resi-sales-upload-modal")
+									span
+										input(name='resi_sales_date_filter', type='text', required='true')
+									span
+										i#resi-sales-table-filter.fa.fa-filter.fa-2x.clickable
+										i.fa.fa-upload.fa-2x.clickable(data-toggle="modal", data-target="#resi-sales-upload-modal")
+										i#resi-sales-table-settings-toggle.fa.fa-cog.fa-2x.clickable(data-toggle="modal")
 							//- p.category Here is a subtitle for this table
-						.card-content.table-responsive
+						#resi-sales-table-settings.card-content
+							.row
+								.col-md-12.text-center
+									p Toggle Columns
+								.col-md-2
+									a.btn.btn-success.toggle-vis(data-column='0') ID
+								.col-md-2
+									a.btn.btn-default.toggle-vis(data-column='1') REP ID
+								.col-md-2
+									a.btn.btn-success.toggle-vis(data-column='2') Company
+								.col-md-2
+									a.btn.btn-success.toggle-vis(data-column='3') Brand
+								.col-md-2
+									a.btn.btn-default.toggle-vis(data-column='4') Name
+								.col-md-2
+									a.btn.btn-default.toggle-vis(data-column='5') Address
+								.col-md-2
+									a.btn.btn-default.toggle-vis(data-column='6') Utility
+								.col-md-2
+									a.btn.btn-default.toggle-vis(data-column='7') Utility Account
+								.col-md-2
+									a.btn.btn-success.toggle-vis(data-column='8') Status
+								.col-md-3
+									a.btn.btn-default.toggle-vis(data-column='9') Enrollment/Cancelation Date
+								.col-md-3
+									a.btn.btn-default.toggle-vis(data-column='10') Projected Ship Date
+								.col-md-2
+									a.btn.btn-default.toggle-vis(data-column='11') Actual Ship Date
+								.col-md-2
+									a.btn.btn-default.toggle-vis(data-column='12') Next Ship Date
+								.col-md-2
+									a.btn.btn-default.toggle-vis(data-column='13') Last Ship Date
+								.col-md-2
+									a.btn.btn-success.toggle-vis(data-column='14') Shipping Status
+								.col-md-2
+									a.btn.btn-default.toggle-vis(data-column='15') Shipping Frequency
+								.col-md-2
+									a.btn.btn-default.toggle-vis(data-column='16') Shipments
+								.col-md-2
+									a.btn.btn-default.toggle-vis(data-column='17') Packages
+								.col-md-2
+									a.btn.btn-default.toggle-vis(data-column='18') LED Package
+								.col-md-2
+									a.btn.btn-default.toggle-vis(data-column='19') Tracking Number
+								.col-md-2
+									a.btn.btn-success.toggle-vis(data-column='20') Date Created
+								.col-md-2
+									a.btn.btn-default.toggle-vis(data-column='21') Last Updated
+							hr
+						.card-content.table-responsive(style='overflow-y:scroll')
 							table#residential-sales-table.table
 								thead
 									th ID
-									th Business Name
-									th Subtype
+									th REP ID
+									th Company
+									th Brand
+									th Name
+									th Address
+									th Utility
+									th Utility Account
+									th Status
+									th Enrollment/Cancelation Date
+									th Projected Ship Date
+									th Actual Ship Date
+									th Next Ship Date
+									th Last Ship Date
+									th Shipping Status
+									th Shipping Frequency
+									th Shipments
+									th Packages
+									th LED Package
+									th Tracking Number
 									th Date Created
+									th Last Updated
 								tbody
 									for sale in resi_sales 
 										tr.clickable
 											td #{sale._id} 
-											td #{sale.business_name}
-											if sale.subtype
-												td #{sale.subtype.name}
+											td #{sale.account_number.rep_account} 
+											td #{sale.company.retail_energy_provider.name}
+											td #{sale.company.brand.name}
+											td #{sale.full_name}
+											td #{sale.full_address}
+											td #{sale.utility.name}
+											td #{sale.account_number.utility_account}
+											if sale.status.cancelled
+												td Cancelled
 											else
-												td n/a
+												td Enrolled
+											if sale.status.cancelled
+												td #{sale.status.cancellation_date}
+											else
+												td #{sale.status.enrollment_date}
+											td #{sale.shipping.ship_date.projected}
+											td #{sale.shipping.ship_date.actual}
+											td #{sale.shipping.ship_date.next}
+											td #{sale.shipping.ship_date.last}
+											td #{sale.shipping.status}
+											td #{sale.shipping.frequency}
+											td #{sale.shipping.shipments}
+											td #{sale.shipping.packages}
+											td #{sale.shipping.led_package}
+											td #{sale.shipping.tracking_number}
 											td #{sale.date_created_pretty}
-			// Modal
+											td #{sale.last_updated}
+			// Upload Modal
 			#resi-sales-upload-modal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='resi-sales-upload-title', aria-hidden='true')
 				.modal-dialog(role='document')
 					.modal-content
@@ -80,14 +173,46 @@ block content
 												.ripple-container
 						.modal-body
 							.tab-content
-								#pending.tab-pane.active
-									form#pendingResiSalesUpload.dropzone()
-										.fallback
-											input(name='file', type='file', multiple='')
+								#pending.tab-pane.active.text-center
+									label.btn.btn-default.btn-file.btn-success Upload Pending Sales
+										input#pending-resi-sales-upload(type='file', name='pending_resi_sales_upload', accept='.csv' )
 								#fulfillment.tab-pane
 									p Fulfillment
 								#enrollments.tab-pane
 									p Enrollments
 						.modal-footer
-							button.btn.btn-secondary(type='button', data-dismiss='modal') Close
-							button.btn.btn-primary(type='button') Save changes
+							#upload-results
+								#accordion
+									#upload-created-card.card
+										#created.card-header.text-center(data-background-color='green')
+											.row
+												.col-md-6.text-left
+													h5.mb-0
+														button.btn.btn-success.btn-link(data-toggle='collapse', data-target='#created-body', aria-expanded='true', aria-controls='created')
+															| Created
+												.col-md-6.text-right
+													.created-count 
+										#created-body.collapse.show(aria-labelledby='created', data-parent='#accordion')
+											.card-body
+									#upload-updated-card.card
+										#updated.card-header.text-center(data-background-color="orange")
+											.row
+												.col-md-6.text-left
+													h5.mb-0
+														button.btn.btn-warning.btn-link.collapsed(data-toggle='collapse', data-target='#updated-body', aria-expanded='false', aria-controls='updated')
+															| Updated
+												.col-md-6.text-right
+													.updated-count
+										#updated-body.collapse(aria-labelledby='updated', data-parent='#accordion')
+											.card-body
+									#upload-failed-card.card
+										#failed.card-header.text-center(data-background-color="red")
+											.row
+												.col-md-6.text-left
+													h5.mb-0
+														button.btn.btn-danger.btn-link.collapsed(data-toggle='collapse', data-target='#failed-body', aria-expanded='false', aria-controls='failed')
+															| Failed
+												.col-md-6.text-right
+													.failed-count
+										#failed-body.collapse(aria-labelledby='failed', data-parent='#accordion')
+											.card-body

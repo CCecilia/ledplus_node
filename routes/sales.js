@@ -13,6 +13,6 @@ router.post('/create', sale_controller.create);
 
 router.post('/estimate/yearly', sale_controller.estimate_yearly);
 
-router.post('/residential/upload/pending', sale_controller.upload_pending_residential);
+router.put('/residential/pending', sale_controller.handle_pending_sale);
 
 module.exports = router;

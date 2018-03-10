@@ -1,4 +1,4 @@
-let new_sale = {
+const new_sale = {
     leds: [],
     bill_image: null
 };
@@ -13,7 +13,7 @@ function trashLED(event) {
     event.preventDefault();
 
     let led_id = event.dataTransfer.getData("led_id");
-    console.log(led_id);
+
     for(let i = 0; i < new_sale.leds.length; i++){
         if( new_sale.leds[i].temp_id == led_id ){
             new_sale.leds.splice(i, 1);
@@ -80,7 +80,7 @@ function estimateYearlyUsage(){
                     service_class: service_class,
                     bill_month: bill_month
                 }), 
-                success: function(data){
+                success: (data) => {
                     if( data.status === 200){
                         $('input[name="yearly_usage"]').parent().removeClass('is-empty');
                         $('input[name="yearly_usage"]').val(data.estimated_annual_usage);
@@ -93,7 +93,7 @@ function estimateYearlyUsage(){
                     }
                     console.log(data);
                 },
-                fail: function(data){
+                fail: (data) => {
                     $.notify({
                         message: data.error_msg
                     },{
@@ -105,30 +105,30 @@ function estimateYearlyUsage(){
     }  
 }
 
-Dropzone.options.pendingResiSalesUpload = {
-    url: '/sales/residential/upload/pending',
-    paramName: 'pending_sales',
-    maxFilesize: 10,
-    method: 'post',
-    maxFiles: 1,
-    acceptedFiles: '.csv',
-    dictDefaultMessage: 'Drop pending sales here.',
-    dictInvalidFileType: 'Sale sheets need to be in .csv format.',
-    url: document.URL,
-    accept: function(file, done) {
-        console.log(file);
-        // if (file.name == $('.dz-success-mark').show(); 
-        done();
-    },
-    init: function() {
-        this.on("complete", function(file) { 
-            $('.dz-success-mark').show(); 
-        });
-    }
-};
+// Dropzone.options.pendingResiSalesUpload = {
+//     url: '/sales/residential/upload/pending',
+//     paramName: 'pending_sales',
+//     maxFilesize: 10,
+//     method: 'post',
+//     maxFiles: 1,
+//     acceptedFiles: '.csv',
+//     dictDefaultMessage: 'Drop pending sales here.',
+//     dictInvalidFileType: 'Sale sheets need to be in .csv format.',
+//     url: document.URL,
+//     accept: (file, done) => {
+//         console.log(file);
+//         // if (file.name == $('.dz-success-mark').show(); 
+//         done();
+//     },
+//     init: () => {
+//         this.on("complete", (file) => { 
+//             $('.dz-success-mark').show(); 
+//         });
+//     }
+// };
 
 
-$(document).ready(function(){
+$(document).ready(() => {
     // Dashboard: daily sales
     if( $( '#dailySalesChart' ).length ){
         let daily_sales_chart_data = JSON.parse($('#dailySalesChart').attr('data'));
@@ -153,7 +153,7 @@ $(document).ready(function(){
 
         // handle time since
         let timer_start = moment();
-        setInterval(function(timerStart){
+        setInterval((timerStart) => {
             let time_since = moment().diff(timer_start, 'minutes');
             $('#daily-chart-time-since').text(`Updated ${time_since} minutes ago.`);
         }, 60000);    
@@ -180,7 +180,7 @@ $(document).ready(function(){
             ['screen and (max-width: 640px)', {
                 seriesBarDistance: 5,
                 axisX: {
-                    labelInterpolationFnc: function(value) {
+                    labelInterpolationFnc: (value) => {
                         return value[0];
                     }
                 }
@@ -193,18 +193,18 @@ $(document).ready(function(){
 
         // handle time since
         let timer_start = moment();
-        setInterval(function(timerStart){
+        setInterval((timerStart) => {
             let time_since = moment().diff(timer_start, 'minutes');
             $('#utility-chart-time-since').text(`Updated ${time_since} minutes ago.`);
         }, 60000);    
     }
 
     // use current location for service address
-    $( '#autofill-service-address' ).click(function(e){
+    $( '#autofill-service-address' ).click((e) => {
         $( '#autofill-service-address' ).addClass('fa-spin');
         let currgeocoder;
 
-        navigator.geolocation.getCurrentPosition(function(position, html5Error) {
+        navigator.geolocation.getCurrentPosition((position, html5Error) => {
             geo_loc = processGeolocationResult(position);
             currLatLong = geo_loc.split(",");
             initializeCurrent(currLatLong[0], currLatLong[1]);
@@ -263,7 +263,7 @@ $(document).ready(function(){
     });
 
     // duplicating service to billing address: street address
-    $( 'input[name="service_address"]' ).keyup( function(e){
+    $( 'input[name="service_address"]' ).keyup( function (e) {
         let bill_input = $('input[name="billing_address"]');
         let parent = bill_input.parent();
         bill_input.val( $(this).val() );
@@ -271,7 +271,7 @@ $(document).ready(function(){
     });
 
     // duplicating service to billing address: city
-    $( 'input[name="service_city"]' ).keyup( function(e){
+    $( 'input[name="service_city"]' ).keyup( function (e) {
         let bill_input = $('input[name="billing_city"]');
         let parent = bill_input.parent();
         bill_input.val( $(this).val() );
@@ -279,7 +279,7 @@ $(document).ready(function(){
     });
 
     // duplicating service to billing address: state
-    $( 'input[name="service_state"]' ).keyup( function(e){
+    $( 'input[name="service_state"]' ).keyup( function (e) {
         let bill_input = $('input[name="billing_state"]');
         let parent = bill_input.parent();
         bill_input.val( $(this).val() );
@@ -287,7 +287,7 @@ $(document).ready(function(){
     });
 
     // duplicating service to billing address: zip code
-    $( 'input[name="service_zip_code"]' ).keyup( function(e){
+    $( 'input[name="service_zip_code"]' ).keyup( function (e) {
         let bill_input = $('input[name="billing_zip_code"]');
         let parent = bill_input.parent();
         bill_input.val( $(this).val() );
@@ -295,7 +295,7 @@ $(document).ready(function(){
     });
 
     // HOO autofill: subtype selection
-    $( "#subtype-dropdown" ).on( 'change',function() {
+    $( "#subtype-dropdown" ).on( 'change', () => {
         // get HOO info from dropdown
         let subtype = $("#subtype-dropdown option:selected").val();
 
@@ -312,12 +312,12 @@ $(document).ready(function(){
     });
 
     // HOO autofill: user input
-    $( ".weekly-hours" ).keyup( function() {
+    $( ".weekly-hours" ).keyup( ()  => {
         let current_input_value = $(this);
         let all_other_hours = 0;
         
         // get all other hours
-        $(".weekly-hours").not(current_input_value).each(function(){
+        $(".weekly-hours").not(current_input_value).each( function (e) {
             all_other_hours += Number($(this).val());
         });
 
@@ -327,7 +327,7 @@ $(document).ready(function(){
     });
 
     // led: counts input 
-    $( '.led-option' ).click( function(e){
+    $( '.led-option' ).click( function (e) {
         let led_id = $(this).attr('data-id');
         $('.led-counts').slideUp();
         $(`.led-counts[data-id=${led_id}]`).slideToggle();
@@ -335,7 +335,7 @@ $(document).ready(function(){
     });
 
     // led: autocalc not-replacing
-    $( "input[name='led-count'], input[name='led-total'], input[name='led-delamping']" ).keyup( function(e){
+    $( "input[name='led-count'], input[name='led-total'], input[name='led-delamping']" ).keyup( function (e) {
         let led_id = $(this).attr('data-id');
         let total = Number($(`input[name='led-total'][data-id=${led_id}]`).val());
         let led_count = Number($(`input[name='led-count'][data-id=${led_id}]`).val());
@@ -344,7 +344,7 @@ $(document).ready(function(){
     });
 
     // led: add to sale
-    $( "form[name='led-to-sale-form']" ).submit( function(e) {
+    $( "form[name='led-to-sale-form']" ).submit( function (e) {
         //Stop html form submission
         e.preventDefault(); 
 
@@ -421,7 +421,7 @@ $(document).ready(function(){
     });
 
     // utility dropdown: set account number max length
-    $( "#utility-dropdown" ).change( function(e){
+    $( "#utility-dropdown" ).change( (e) => {
         let utility = $( "#utility-dropdown option:selected" );
         let account_length = JSON.parse(utility.attr('data')).utility.max_account_digits;
 
@@ -467,9 +467,9 @@ $(document).ready(function(){
     });
 
     // create Sale
-    $( '.create-new-sale' ).click(function(e){
+    $( '.create-new-sale' ).click( (e) => {
         // check for any blanks
-        $('input[required="true"]').each(function(){
+        $('input[required="true"]').each(function () {
             if( !$(this).val() ){
                 if($(this).attr('type') === 'text'){
                     $(this).parent().addClass('has-error');
@@ -511,7 +511,6 @@ $(document).ready(function(){
         new_sale.yearly_kwh = Number($('input[name="yearly_usage"]').val());
         new_sale.service_start_date = $('input[name="service_start_date"]').val();
 
-        console.log(new_sale);
         // estimate with annual scaler on backend
         $.ajax({
             type: "POST",
@@ -519,7 +518,7 @@ $(document).ready(function(){
             contentType: "application/json",
             dataType: "json",
             data: JSON.stringify(new_sale), 
-            success: function(data){
+            success: (data) => {
                 if( data.status === 200){
                     // notify: created
                     $.notify({
@@ -556,7 +555,7 @@ $(document).ready(function(){
                     });
                 }
             },
-            fail: function(){
+            fail: () => {
                 $.notify({
                     message: 'unknown server error'
                 },{
@@ -567,23 +566,165 @@ $(document).ready(function(){
     });
 
     // sales table
-    let sales_table = $('#sales-table').DataTable( {
+    let sales_table = $( '#sales-table' ).DataTable( {
         stateSave: true
     } );
 
     // sales table: clicks
-    $( '#sales-table tbody' ).on('click', 'tr', function () {
+    $( '#sales-table tbody' ).on('click', 'tr', function (){
         let table = $('#sales-table');
-        var data = sales_table.row( this ).data();
+        let data = sales_table.row( this ).data();
         window.location = window.location.protocol + "//" + window.location.host + "/sales/sale/"+data[0]
     } ); 
 
     // residential sales table
-    $( '#residential-sales-table' ).DataTable( {
-        stateSave: true
+    let resi_sales_table = $( '#residential-sales-table' ).DataTable( {
+        columnDefs: [
+            {
+                targets: [1, 5, 6, 7, 9, 10, 11, 12, 13, 15, 16, 17, 18, 19, 21],
+                visible: false,
+                searchable: false
+            },
+            {
+                targets: [1],
+                visible: false,
+                searchable: true
+            },
+        ],
+        dom: 'Bfrtip',
+        buttons: [
+            'selectAll',
+            'selectNone'
+        ],
+        language: {
+            buttons: {
+                selectAll: "Select all items",
+                selectNone: "Select none"
+            }
+        }
     } );
 
-    // residential sales
+    // residential sales table: toggle settings
+    $( '#resi-sales-table-settings-toggle' ).click((e) => {
+        $( '#resi-sales-table-settings' ).slideToggle();
+    });
+
+    // residential sales table: toggle filters
+    $( '#resi-sales-table-filter' ).click((e) => {
+        console.log('show filters');
+    });
+
+    // residential sales table: toggle filters
+    $( 'input[name="resi_sales_date_filter"]' ).daterangepicker({
+            autoUpdateInput: false,
+            locale: {
+            cancelLabel: 'Clear'
+        }
+    });
+
+    $('input[name="datefilter"]').on('apply.daterangepicker', function(ev, picker) {
+        $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+    });
+
+    $('input[name="datefilter"]').on('cancel.daterangepicker', function(ev, picker) {
+        $(this).val('');
+    });
+    // residential sales table: toggle columns
+    $('a.toggle-vis').on( 'click', function (e) {
+        e.preventDefault();
+ 
+        let column = resi_sales_table.column( $(this).attr('data-column') );
+ 
+        // Toggle column vis
+        column.visible(!column.visible());
+
+        $(this).toggleClass('btn-success', 'btn-default');
+    } );
+
+    // residential sales table: select row
+    $('#residential-sales-table tbody').on( 'click', 'tr', function () {
+        $(this).toggleClass('selected');
+    } );
+
+    // residential sales table: go to sala details page
+    $( '#residential-sales-table tbody' ).on('dblclick', 'tr', function (){
+        let data = resi_sales_table.row( this ).data();
+        window.location = window.location.protocol + "//" + window.location.host + "/sales/residential/"+data[0]
+    } );
+
+    // residentail sales: upload modal
+    $( '#resi-sales-upload-modal' ).draggable({
+        handle: ".modal-header"
+    });
+
+    // residential sales: pending sales upload
+    $( 'input[name=pending_resi_sales_upload]' ).on('change', (e) => {
+        let pending_sales = e.target.files[0];
+        let upload_results = {
+            failed: [],
+            created: [],
+            updated: []
+        };
+
+        Papa.parse(pending_sales, {
+            header: true,
+            dynamicTyping: true,
+            skipEmptyLines: true,
+            worker: false,
+            beforeFirstChunk: (chunk) => {
+                let rows = chunk.split( /\r\n|\r|\n/ );
+                let headings = rows[0].toLowerCase().trim().replace(/ /g, "_");
+                rows[0] = headings;
+                return rows.join("\r\n");
+            },
+            complete: (sales) => {
+                // reset file field
+                $( 'input[name=pending_resi_sales_upload]' ).val('');
+
+                // upload progess
+                let total_sales = sales.data.length;
+                let uploaded_count = 0;
+                let progress;
+                let progress_notification = $.notify({
+                    title: 'Upload Progress',
+                    message: `Uploading 1/${total_sales}`
+                },{
+                    type: "success",
+                    timer: 1000,
+                    delay: 0,
+                    showProgressbar: true
+                });
+
+                // upload each sale
+                sales.data.forEach(function(sale) {
+                    $.ajax({
+                        type: "PUT",
+                        url: "/sales/residential/pending",
+                        contentType: "application/json",
+                        dataType: "json",
+                        data: JSON.stringify(sale),
+                        success: (data) => {
+                            uploaded_count ++;
+                            progress = Math.floor( (uploaded_count / total_sales)  * 100 );
+                            progress_notification.update({
+                                progress: progress,
+                                message: `Uploading ${uploaded_count}/${total_sales}`
+                            });
+
+                            if( data.status === 201 ){
+                                upload_results.created.push(data.sale);
+                            } else if( data.status === 200 ){
+                                upload_results.updated.push(data.sale);
+                            } else {
+                                upload_results.failed.push(data.sale);
+                            }
+                        }
+                    });
+                });
+                console.log(upload_results);
+            }
+        });
+    });
 
     // rep table
     let rep_table = $( '#rep-table' ).DataTable( {
@@ -591,14 +732,13 @@ $(document).ready(function(){
     } );
 
     // rep table: clicks
-    $( '#rep-table tbody' ).on('click', 'tr', function () {
-        let table = $('#rep-table');
-        var data = rep_table.row( this ).data();
+    $( '#rep-table tbody' ).on('click', 'tr', function() {
+        let data = rep_table.row( this ).data();
         window.location = window.location.protocol + "//" + window.location.host + "/retailEnergyProviders/details/"+data[0]
     } ); 
 
     // rep detail: rate upload
-    $( 'input[name=rate-sheet-upload]' ).on('change', function(e){
+    $( 'input[name=rate-sheet-upload]' ).on('change', (e) => {
         let rate_sheet = e.target.files[0];
         let rep_id = $(this).attr('data-id');
 
@@ -607,15 +747,13 @@ $(document).ready(function(){
             dynamicTyping: true,
             skipEmptyLines: true,
             worker: false,
-            beforeFirstChunk: function(chunk) {
+            beforeFirstChunk: (chunk) => {
                 let rows = chunk.split( /\r\n|\r|\n/ );
                 let headings = rows[0].toLowerCase().trim().replace(/ /g, "_");
                 rows[0] = headings;
                 return rows.join("\r\n");
             },
-            complete: function(results) {
-                rates = results;
-                
+            complete: (rates) => {
                 // estimate with annual scaler on backend
                 $.ajax({
                     type: "POST",
@@ -623,14 +761,14 @@ $(document).ready(function(){
                     contentType: "application/json",
                     dataType: "json",
                     data: JSON.stringify(rates), 
-                    success: function(data){
+                    success: (data) => {
                         if( data.status === 200){
                             $.notify({
                                 message: 'Your rates have been successfully uploaded.'
                             },{
                                 type: 'success'
                             });
-                            setTimeout(function(){ 
+                            setTimeout( () => {  
                                 window.location.reload();
                             }, 3000);
 
@@ -642,7 +780,7 @@ $(document).ready(function(){
                             });
                         }
                     },
-                    fail: function(data){
+                    fail: (data) => {
                         $.notify({
                             message: data.error_msg
                         },{
@@ -659,7 +797,8 @@ $(document).ready(function(){
         stateSave: true,
         dom: 'Bfrtip',
         buttons: [
-            'csv', 'excel'
+            'csv', 
+            'excel'
         ],
         lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]]
     } ); 
@@ -670,14 +809,13 @@ $(document).ready(function(){
     } );
 
     // LED table: clicks
-    $( '#led-table tbody' ).on('click', 'tr', function () {
-        let table = $('#led-table');
+    $( '#led-table tbody' ).on('click', 'tr', function (){
         var data = led_table.row( this ).data();
         window.location = window.location.protocol + "//" + window.location.host + "/LEDs/details/"+data[0]
     }); 
 
     // LED: Remove
-    $( '#remove-led' ).click(function(e){
+    $( '#remove-led' ).click( function (e){
         var result = confirm("Are you  sure you wish to delete LED.");
         if (result) {
             $.ajax({
@@ -686,14 +824,14 @@ $(document).ready(function(){
                 contentType: "application/json",
                 dataType: "json",
                 data: JSON.stringify({led_id: $(this).attr('data-id')}),
-                success: function(callback){
+                success: (callback) => {
                     $.notify({
                         message: 'LED removed please return to list'
                     },{
                         type: 'success'
                     });
                 },
-                fail: function(callback){
+                fail: (callback) => {
                     $.notify({
                         message: 'unknown server error'
                     },{
@@ -710,7 +848,7 @@ $(document).ready(function(){
     } );
 
     // Service Class table: clicks
-    $( '#service-class-table tbody' ).on('click', 'tr', function () {
+    $( '#service-class-table tbody' ).on('click', 'tr', function (){
         let table = $('#service-class-table');
         var data = service_class_table.row( this ).data();
         window.location = window.location.protocol + "//" + window.location.host + "/serviceClasses/details/"+data[0]

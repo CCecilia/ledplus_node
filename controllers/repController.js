@@ -7,10 +7,10 @@ const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 
 // REP: list
-exports.rep_list = function(req, res, next) {
+exports.rep_list = (req, res, next) => {
     RetailEnergyProvider.find()
     .sort({name: 1})
-    .exec(function(err, rep_list){
+    .exec((err, rep_list) => {
         if(err){ return next(err); }
 
         let template_context = {
@@ -24,17 +24,17 @@ exports.rep_list = function(req, res, next) {
 };
 
 // REP: detail
-exports.details = function(req, res, next) {
+exports.details = (req, res, next) => {
     async.parallel({
-        rep: function(callback){
+        rep: (callback) => {
             RetailEnergyProvider.findById(req.params.id)
             .exec(callback);
         },
-        users: function(callback){
+        users: (callback) => {
             User.find({retail_energy_provider: ObjectId(req.params.id)})
             .exec(callback);
         }
-    }, function(err, results){
+    }, (err, results) => {
         if(err){ return next(err); }
 
         if(results.rep==null) { 
@@ -59,7 +59,7 @@ exports.update = [
     sanitizeBody('name').trim().escape(),
     (req, res, next) => {
         RetailEnergyProvider.findById(req.params.id)
-        .exec(function(err, rep){
+        .exec((err, rep) => {
             if(err){ return next(err); }
 
             if(rep == null) { 
@@ -88,11 +88,13 @@ exports.update = [
                     rep.logo = encoded_image;
                 }
 
-                rep.save(function(err, updated_rep){
+                rep.save((err, updated_rep) => {
                     if(err){ return next(err); }
+
                     template_context.rep = updated_rep;
+
                     User.find({retail_energy_provider: ObjectId(req.params.id)})
-                    .exec(function(err, users){
+                    .exec((err, users) => {
                         template_context.users = users
                         res.render('rep_detail', template_context);
                     });
@@ -104,24 +106,24 @@ exports.update = [
 ];
 
 // REP: upload rates
-exports.rate_sheet_upload = function(req, res, next) {
+exports.rate_sheet_upload = (req, res, next) => {
     rates = req.body.data;
 
     if( rates.length > 0 ){
         RetailEnergyProvider.findById(req.params.id)
-        .exec(function(err, rep){
+        .exec((err, rep) => {
             if(err){ return next(err); }
 
             rep.rates = rates;
 
-            rep.save(function(err){
+            rep.save((err) => {
                 if(err){
                     console.log(err);
                     res.send({status: 500, error_msg: 'unable to save rates'});
                 }
 
                 res.send({status: 200});
-            })
+            });
         });
     } else {
         res.send({status: 500, error_msg: 'no rates found in upload'});

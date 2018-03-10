@@ -27,16 +27,15 @@ let UserSchema = new Schema({
     }
 });
 
-UserSchema.virtual('dashboard').get(function(){
-    let id = this._id;
-    return `/users/dashboard/${id}/`;
+UserSchema.virtual('dashboard').get(function () {
+    return `/users/dashboard/${this._id}/`
 });
 
-UserSchema.methods.generateHash = function(password) {
+UserSchema.methods.generateHash = function (password) {
     return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
 };
 
-UserSchema.methods.validPassword = function(password) {
+UserSchema.methods.validPassword = function (password) {
     return bcrypt.compareSync(password, this.password);
 };
 

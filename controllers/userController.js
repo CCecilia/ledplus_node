@@ -12,7 +12,7 @@ const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 
 // Login Page
-exports.login_form = function(req, res) {
+exports.login_form = (req, res) => {
     res.render('login', {title: 'Login'});
 };
 
@@ -45,9 +45,9 @@ exports.login = [
 ];
 
 // Register Page
-exports.register_form = function(req, res, next) {
+exports.register_form = (req, res, next) => {
     RetailEnergyProvider.find({},'name')
-    .exec(function (err, reps) {
+    .exec( (err, reps) => {
       if (err) { return next(err); }
       
       let template_context = {
@@ -125,9 +125,9 @@ exports.register = [
 ];
 
 // Dashboard
-exports.dashboard = function(req, res, next) {
+exports.dashboard = (req, res, next) => {
     User.findById(req.params.id)
-    .exec(function(err, user){
+    .exec((err, user) => {
         if (err) { return next(err); }
 
         if (user==null) {
@@ -138,18 +138,18 @@ exports.dashboard = function(req, res, next) {
 
         if( user.admin ){
             async.parallel({
-                sale_count: function(callback){
+                sale_count: (callback) => {
                     Sale.count(callback);
                 },
-                user_count: function(callback){
+                user_count: (callback) => {
                     User.count(callback);
                 },
-                rep_count: function(callback){
+                rep_count: (callback) => {
                     RetailEnergyProvider.count(callback);
                 },
-                rate_count: function(callback){
+                rate_count: (callback) => {
                     RetailEnergyProvider.find().
-                    exec(function(err, rep_list){
+                    exec((err, rep_list) => {
                         if (err) { return next(err); }
                         let count = 0;
 
@@ -160,7 +160,7 @@ exports.dashboard = function(req, res, next) {
                         callback(null, count);
                     });
                 },
-                daily_chart_data: function(callback){
+                daily_chart_data: (callback) => {
                     //  aggregate daily sales data
                     Sale.aggregate([
                         { 
@@ -182,7 +182,7 @@ exports.dashboard = function(req, res, next) {
                             }
                         }
                     ])
-                    .exec(function(err, sale_list){
+                    .exec((err, sale_list) => {
                         if (err) { console.log(err); return next(err); }
 
                         // format for chartist on the front
@@ -235,7 +235,7 @@ exports.dashboard = function(req, res, next) {
                         callback(err, formatted_daily_chart_data);
                     });
                 },
-                utility_chart_data: function(callback){
+                utility_chart_data: (callback) => {
                     //  aggregate daily sales data
                     //  using lookup to populate utility data: name
                     Sale.aggregate([
@@ -263,7 +263,7 @@ exports.dashboard = function(req, res, next) {
                             }
                         }
                     ])
-                    .exec(function(err, sale_list){
+                    .exec((err, sale_list) => {
                         if (err) { console.log(err); return next(err); }
 
                         let utility_chart_data = {
@@ -279,7 +279,7 @@ exports.dashboard = function(req, res, next) {
                         callback(err, utility_chart_data)
                     });
                 },
-                top_sellers: function(callback){
+                top_sellers: (callback) => {
                     Sale.aggregate([
                         {
                             $lookup: {
@@ -315,7 +315,7 @@ exports.dashboard = function(req, res, next) {
                     ])
                     .exec(callback);
                 }
-            }, function(err, results){
+            }, (err, results) => {
                 if (err) { console.log(err); return next(err); }
                 console.log(results.top_sellers[0]._id);
                 template_context = {
@@ -347,7 +347,7 @@ exports.dashboard = function(req, res, next) {
 };
 
 // Logout
-exports.logout = function(req, res) {
+exports.logout = (req, res) => {
     req.session.user = null;
     res.redirect('/');
 };

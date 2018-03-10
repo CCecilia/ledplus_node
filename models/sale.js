@@ -99,21 +99,13 @@ let SaleSchema = new Schema({
 });
 
 
-SaleSchema.virtual('sale_page').get(function(){
-    let id = this._id;
-    return `/sales/sale/${id}/`;
-});
+SaleSchema.virtual('sale_page').get(() => `/sales/sale/${this._id}/`);
 
-SaleSchema.virtual('date_created_pretty').get(function(){
-    return moment(this.date_created).format('MMMM DD, YYYY');
-});
+SaleSchema.virtual('date_created_pretty').get(() => moment(this.date_created).format('MMMM DD, YYYY'));
 
-SaleSchema.virtual('service_start_date_pretty').get(function(){
+SaleSchema.virtual('service_start_date_pretty').get(() => moment(this.service_start_date).format('MM/DD/YYYY'));
 
-    return moment(this.service_start_date).format('MM/DD/YYYY');
-});
-
-SaleSchema.virtual('calculations').get(function(){
+SaleSchema.virtual('calculations').get(() => {
     let maintenance_cost = 0;
     let total_installation_cost = 0;
     let wattage_reduction_total = 0;
@@ -145,7 +137,7 @@ SaleSchema.virtual('calculations').get(function(){
     return calculations;
 });
 
-SaleSchema.virtual('rate').get(function(){
+SaleSchema.virtual('rate').get(() => {
     let rate;
     let total_installation_cost = 0;
     let wattage_reduction_total = 0;

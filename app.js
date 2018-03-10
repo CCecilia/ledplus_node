@@ -25,7 +25,7 @@ const app = express();
 // database setup
 // const mongoDB = 'mongodb://localhost:27017/ledplus';
 // mongoose.connect(mongoDB);
-mongoose.connect(config.mongoURI[app.settings.env], function(err, res) {
+mongoose.connect(config.mongoURI[app.settings.env], (err, res) => {
   if(err) {
     console.log('Error connecting to the database. ' + err);
   } else {
@@ -52,7 +52,7 @@ const store = new MongoDBStore({
     collection: 'user_session'
   });
   // Catch errors
-  store.on('error', function(error) {
+  store.on('error', (error) => {
     assert.ifError(error);
     assert.ok(false);
 });
@@ -67,9 +67,9 @@ app.use(session({
 }))
 app.use(fileUpload());
 
-app.use(function(req, res, next) {
+app.use((req, res, next) => {
   if (req.session && req.session.user) {
-    User.findOne({ email: req.session.user.email }, function(err, user) {
+    User.findOne({ email: req.session.user.email }, (err, user) => {
       if (user) {
         req.user = user;
         delete req.user.password; // delete the password from the session
@@ -92,14 +92,14 @@ app.use('/stateRates', state_rates);
 
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use((req, res, next) => {
   let err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use((err, req, res, next) => {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};

@@ -1,9 +1,9 @@
 const StateRate = require('../models/stateRate');
 
 // LEDs: list
-exports.state_rate_list = function(req, res, next) {
+exports.state_rate_list = (req, res, next) => {
     StateRate.find()
-    .exec(function(err, state_rate_list){
+    .exec((err, state_rate_list) => {
         if(err){ console.log( err); return next(err); }
 
         let template_context = {

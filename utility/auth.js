@@ -1,4 +1,4 @@
-let requireLogin = function(req, res, next) {
+let requireLogin = (req, res, next) => {
   if( !req.session.user ) {
     res.redirect('/');
   } else {

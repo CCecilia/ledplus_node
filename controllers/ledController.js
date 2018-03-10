@@ -5,9 +5,9 @@ const fs = require('fs');
 const Led = require('../models/led');
 
 // LEDs: list
-exports.led_list = function(req, res, next) {
+exports.led_list = (req, res, next) => {
     Led.find()
-    .exec(function(err, led_list){
+    .exec((err, led_list) => {
         if(err){ return next(err); }
 
         let template_context = {
@@ -21,7 +21,7 @@ exports.led_list = function(req, res, next) {
 };
 
 // LEDs: detail
-exports.led_detail = function(req, res, next) {
+exports.led_detail = (req, res, next) => {
     Led.findById(req.params.id)
     .exec(function(err, led){
         if(err){ return next(err); }
@@ -78,7 +78,7 @@ exports.led_update = [
 
     (req, res, next) => {
         Led.findById(req.params.id)
-        .exec(function(err, led){
+        .exec((err, led) => {
             if(err){ return next(err); }
 
             if(led == null) { 
@@ -124,7 +124,7 @@ exports.led_update = [
                 led.pricing.sale_price = req.body.sale_price;
                 led.pricing.non_led_price = req.body.non_led_price;
 
-                led.save(function(err, updated_led){
+                led.save((err, updated_led) => {
                     if(err){ return next(err); }
                     template_context.led = updated_led;
                     res.render('led_detail', template_context);
@@ -137,7 +137,7 @@ exports.led_update = [
 ];
 
 // LEDs: create form
-exports.led_create_form = function(req, res, next) {
+exports.led_create_form = (req, res, next) => {
     res.render('led_detail', {title: 'New LED', user: req.session.user});
 };
 
@@ -221,13 +221,13 @@ exports.led_create = [
                 non_led_price: req.body.non_led_price,   
             });
 
-            if(req.files.led_image){
+            if( req.files.led_image ){
                 let bitmap = req.files.led_image.data.toString('base64');
                 let mimetype = req.files.led_image.mimetype;
                 let encoded_image = `data:${mimetype};base64,${bitmap}`
                 new_led.image = encoded_image;
             }
-            new_led.save(function(err, led){
+            new_led.save((err, led) => {
                 if(err){
                     template_context.errors = [{msg: 'failed to create LED'}];
                     res.render('led_detail', template_context);
@@ -239,8 +239,8 @@ exports.led_create = [
     }
 ];
 
-exports.remove = function(req, res, next) {
-    Led.findByIdAndRemove(req.body.led_id, function(err){
+exports.remove = (req, res, next) => {
+    Led.findByIdAndRemove(req.body.led_id, (err) => {
         if(err){ return next(err); }
         res.status(200).send();
     });
